@@ -138,12 +138,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f30e7476521f6f8af1a1c4c0b8cc94f0bee37d91763d0ca2665f299b6cd8aec"
 
 [[package]]
-name = "bytemuck"
-version = "1.14.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed2490600f404f2b94c167e31d3ed1d5f3c225a0f3b80230053b3e0b7b962bd9"
-
-[[package]]
 name = "byteorder"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -935,7 +929,6 @@ dependencies = [
  "embuild",
  "esp-idf-svc",
  "log",
- "rgb-led",
 ]
 
 [[package]]
@@ -1207,26 +1200,6 @@ dependencies = [
  "libc",
  "normpath",
  "windows-sys 0.45.0",
-]
-
-[[package]]
-name = "rgb"
-version = "0.8.37"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "05aaa8004b64fd573fc9d002f4e632d51ad4f026c2b5ba95fcb6c2f32c2c47d8"
-dependencies = [
- "bytemuck",
-]
-
-[[package]]
-name = "rgb-led"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "embuild",
- "esp-idf-svc",
- "log",
- "rgb",
 ]
 
 [[package]]
