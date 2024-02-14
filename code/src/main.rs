@@ -1,11 +1,19 @@
 use std::num::NonZeroU32;
 
 use anyhow::Result;
-use esp_idf_svc::hal::delay::FreeRtos;
 use esp_idf_svc::hal::gpio;
+use esp_idf_svc::hal::delay::FreeRtos;
 use esp_idf_svc::hal::gpio::{InputPin, InterruptType, Level, OutputPin, Pin, PinDriver, Pull};
-use esp_idf_svc::hal::prelude::Peripherals;
+use esp_idf_svc::hal::i2c::{I2c, I2cConfig, I2cDriver};
+use esp_idf_svc::hal::peripheral::Peripheral;
+use esp_idf_svc::hal::prelude::{FromValueType, Peripherals};
 use esp_idf_svc::hal::task::notification::Notification;
+use ringbuffer::{ConstGenericRingBuffer, RingBuffer};
+use veml7700::Veml7700;
+
+use crate::error::Error;
+
+mod error;
 
 const LED_POWER_STEPS: usize = 100;
 
@@ -13,14 +21,15 @@ const LED_POWER_STEPS: usize = 100;
 const ON_OFF_REACTION_STEP_DELAY_MS: u32 = 500;
 
 // step/max-reaction delay when LED Power Phase is in PowerDown or PowerUp state
-const LED_DIMM_STEP_DELAY_MS: u32 = 100;
+const LED_DIMM_DOWN_STEP_DELAY_MS: u32 = 200;
 
+const LED_DIMM_UP_STEP_DELAY_MS: u32 = 65;
 
 
 // in range [0..LED_POWER_STEPS]
 // translates to power level in range [0..100] via cubic curve y=x³
 fn led_power_level(step: usize) -> usize {
-    (step as f32 / 100_f32).powi(3).round() as usize 
+    (step as f32 / 100_f32).powi(3).round() as usize
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
@@ -32,33 +41,37 @@ enum Phase {
 }
 
 #[derive(Clone, Eq, PartialEq, Debug)]
-struct BarState {
-    pub ambient_light_sensor_lux: u32,
+struct State {
+    // ambient light level history buffer (last 10 values)
+    pub ambient_light_sensor_lux_buffer: ConstGenericRingBuffer<u32, 10>,
     pub phase: Phase,
     pub led_power_step: usize,
 }
 
-impl BarState {
+impl State {
     pub fn new() -> Self {
-        BarState {
-            ambient_light_sensor_lux: 0,
+        State {
+            ambient_light_sensor_lux_buffer: ConstGenericRingBuffer::new(),
             phase: Phase::Off,
             led_power_step: 0,
         }
     }
-    pub fn dark_enough_for_operation(&self) -> bool {
+    pub fn is_dark_enough_for_operation(&self) -> bool {
+        
+
         // TODO determine active/passive state based on ambient light level history
-        //  take medium of lowest 3 Lux values
+        //  => take median values
         todo!()
     }
-    
+
     pub fn duty_step_delay_ms(&self) -> u32 {
         match self.phase {
             Phase::Off | Phase::On => ON_OFF_REACTION_STEP_DELAY_MS,
-            Phase::PowerDown | Phase::PowerUp => LED_DIMM_STEP_DELAY_MS
+            Phase::PowerDown => LED_DIMM_DOWN_STEP_DELAY_MS,
+            Phase::PowerUp => LED_DIMM_UP_STEP_DELAY_MS
         }
     }
-    
+
     pub fn calc_dimm_progress(&mut self) {
         match self.phase {
             Phase::Off => debug_assert_eq!(self.led_power_step, 0),
@@ -83,56 +96,66 @@ impl BarState {
     }
 }
 
-struct Device<P1: Pin> {
-    pub presence_sensor_gpio_pin: PinDriver<'static, P1, gpio::Input>,
-    pub notification: Notification
+struct PresenceSensor<P1: Pin> {
+    pub gpio_pin: PinDriver<'static, P1, gpio::Input>,
+    pub notification: Notification,
 }
 
-impl<P1: Pin> Device<P1> {
-    pub fn read_sensors(&mut self, bar_state: &mut BarState) -> Result<()> {
-        
-        self.measure_ambient_light_level();
-        
-        if let Some(_) = self.notification.wait(esp_idf_svc::hal::delay::NON_BLOCK) {
-            if bar_state.dark_enough_for_operation() {
-                self.on_presence_sensor_event(bar_state);
-                // re-enable interrupt after we have been triggering (disables the interrupt automatically)
-                self.presence_sensor_gpio_pin.enable_interrupt()?;
-            }
+struct Devices<P1: Pin>
+{
+    pub presence_sensor: PresenceSensor<P1>,
+    pub ambient_light_sensor: Veml7700<I2cDriver<'static>>,
+}
+
+impl<P1: Pin> Devices<P1>
+{
+    pub fn read_sensors(&mut self, state: &mut State) -> Result<()> {
+        if state.phase == Phase::Off {
+            self.measure_ambient_light_level(state)?;
         }
 
+        if let Some(_) = self.presence_sensor.notification.wait(esp_idf_svc::hal::delay::NON_BLOCK) {
+            if state.is_dark_enough_for_operation() {
+                self.on_presence_sensor_event(state);
+                // re-enable interrupt after we have been triggering (disables the interrupt automatically)
+                self.presence_sensor.gpio_pin.enable_interrupt()?;
+            }
+        }
         Ok(())
     }
-    
-    fn measure_ambient_light_level(&mut self) {
-        // TODO measure ambient light level - only if LED is Off
-        // + store level in ambient light level history buffer (past 10 sec)
-        todo!()
+
+    // measure ambient light level - only if LED is Off
+    fn measure_ambient_light_level(&mut self, state: &mut State) -> Result<()> {
+        let lux: u32 = self.ambient_light_sensor.read_lux()
+            .map_err(|e| Error::from(e))?.round() as u32;
+        state.ambient_light_sensor_lux_buffer.enqueue(lux);
+        Ok(())
     }
-    
-    fn on_presence_sensor_event(&mut self, bar_state: &mut BarState) {
-        match self.presence_sensor_gpio_pin.get_level() {
+
+    fn on_presence_sensor_event(&mut self, state: &mut State) {
+        match self.presence_sensor.gpio_pin.get_level() {
             Level::Low => {
-                bar_state.phase = Phase::PowerDown;
+                state.phase = Phase::PowerDown;
                 log::debug!("Dimming down");
             }
             Level::High => {
-                bar_state.phase = Phase::PowerUp;
+                state.phase = Phase::PowerUp;
                 log::debug!("Dimming up");
-            },
+            }
         }
     }
 
-    pub fn apply_led_power_level(&self, _bar_state: &BarState) {
+    pub fn apply_led_power_level(&self, _bar_state: &State) {
         // TODO LED PWM interface
         todo!()
     }
 }
 
 
-fn setup_presence_sensor_on_interrupt<P: InputPin + OutputPin>(
+fn init_presence_sensor_on_interrupt<P: InputPin + OutputPin>(
     gpio_pin: P
-) -> Result<(PinDriver<'static, P, gpio::Input>, Notification)> {
+) -> Result<PresenceSensor<P>> {
+
     // radar presence sensor
     let mut pin_driver = PinDriver::input(gpio_pin)?;
     pin_driver.set_pull(Pull::Floating)?;
@@ -151,7 +174,26 @@ fn setup_presence_sensor_on_interrupt<P: InputPin + OutputPin>(
     // initial enable of interrupt
     pin_driver.enable_interrupt()?;
 
-    Ok((pin_driver, notification))
+    Ok(PresenceSensor {
+        gpio_pin: pin_driver,
+        notification,
+    })
+}
+
+fn init_veml7700<I2C>(
+    i2c: impl Peripheral<P=I2C> + 'static,
+    sda: impl Peripheral<P=impl InputPin + OutputPin> + 'static,
+    scl: impl Peripheral<P=impl InputPin + OutputPin> + 'static,
+) -> Result<Veml7700<I2cDriver<'static>>>
+where I2C: I2c,
+{
+    let config = I2cConfig::new().baudrate(100.kHz().into());
+    let i2c_driver = I2cDriver::new(i2c, sda, scl, &config)?;
+
+    // Initialize the VEML7700 with the I2C
+    let mut veml7700_device = Veml7700::new(i2c_driver);
+    veml7700_device.enable().map_err(|e| Error::from(e))?;
+    Ok(veml7700_device)
 }
 
 fn main() -> Result<()> {
@@ -164,26 +206,34 @@ fn main() -> Result<()> {
     esp_idf_svc::log::EspLogger::initialize_default();
 
     let peripherals = Peripherals::take().unwrap();
-    
-    let (presence_sensor_gpio_pin, presence_sensor_notification) = setup_presence_sensor_on_interrupt(peripherals.pins.gpio12)?;
-    
-    let mut device = Device {
-        presence_sensor_gpio_pin,
-        notification: presence_sensor_notification    
+
+    let presence_sensor = init_presence_sensor_on_interrupt(peripherals.pins.gpio12)?;
+
+    let ambient_light_sensor = init_veml7700(
+        peripherals.i2c0,
+        peripherals.pins.gpio10,
+        peripherals.pins.gpio11,
+    )?;
+
+    let mut devices = Devices {
+        presence_sensor,
+        ambient_light_sensor,
     };
-    
-    let mut bar_state = BarState::new();
-    
+
+    let mut bar_state = State::new();
+
     loop {
         FreeRtos::delay_ms(bar_state.duty_step_delay_ms());
-        device.read_sensors(&mut bar_state)?;
+        devices.read_sensors(&mut bar_state)?;
         bar_state.calc_dimm_progress();
-        device.apply_led_power_level(&bar_state);
+        devices.apply_led_power_level(&bar_state);
     }
 }
+
 
 // TODO find a suitable project name (working project name "led-sensor-bar").
 //  Candidates:
 //  - smart-night-light
 // TODO implement a faster dimm-up and slower dimm-down for the LED
 // TODO disable unused pins
+
