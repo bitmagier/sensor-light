@@ -8,7 +8,7 @@ use esp_idf_svc::hal::i2c::{I2c, I2cConfig, I2cDriver};
 use esp_idf_svc::hal::peripheral::Peripheral;
 use esp_idf_svc::hal::prelude::{FromValueType, Peripherals};
 use esp_idf_svc::hal::task::notification::Notification;
-use ringbuffer::{ConstGenericRingBuffer, RingBuffer};
+use generic_array::typenum::U10;
 use veml7700::Veml7700;
 
 use crate::error::Error;
@@ -25,6 +25,7 @@ const LED_DIMM_DOWN_STEP_DELAY_MS: u32 = 200;
 
 const LED_DIMM_UP_STEP_DELAY_MS: u32 = 65;
 
+const LUX_THRESHOLD: u32 = 30;
 
 // in range [0..LED_POWER_STEPS]
 // translates to power level in range [0..100] via cubic curve y=x³
@@ -40,28 +41,25 @@ enum Phase {
     On,
 }
 
-#[derive(Clone, Eq, PartialEq, Debug)]
+#[derive(Debug)]
 struct State {
     // ambient light level history buffer (last 10 values)
-    pub ambient_light_sensor_lux_buffer: ConstGenericRingBuffer<u32, 10>,
+    pub ambient_light_sensor_lux_buffer: median::stack::Filter<u32, U10>,
     pub phase: Phase,
-    pub led_power_step: usize,
+    pub led_power_stage: usize,
 }
 
 impl State {
     pub fn new() -> Self {
         State {
-            ambient_light_sensor_lux_buffer: ConstGenericRingBuffer::new(),
+            ambient_light_sensor_lux_buffer: median::stack::Filter::new(),
             phase: Phase::Off,
-            led_power_step: 0,
+            led_power_stage: 0,
         }
     }
+    
     pub fn is_dark_enough_for_operation(&self) -> bool {
-        
-
-        // TODO determine active/passive state based on ambient light level history
-        //  => take median values
-        todo!()
+        self.ambient_light_sensor_lux_buffer.median() <= LUX_THRESHOLD
     }
 
     pub fn duty_step_delay_ms(&self) -> u32 {
@@ -74,24 +72,24 @@ impl State {
 
     pub fn calc_dimm_progress(&mut self) {
         match self.phase {
-            Phase::Off => debug_assert_eq!(self.led_power_step, 0),
+            Phase::Off => debug_assert_eq!(self.led_power_stage, 0),
             Phase::PowerDown => {
-                if self.led_power_step > 0 {
-                    self.led_power_step -= 1;
-                    if self.led_power_step == 0 {
+                if self.led_power_stage > 0 {
+                    self.led_power_stage -= 1;
+                    if self.led_power_stage == 0 {
                         self.phase = Phase::Off;
                     }
                 }
             }
             Phase::PowerUp => {
-                if self.led_power_step < LED_POWER_STEPS {
-                    self.led_power_step += 1;
-                    if self.led_power_step == LED_POWER_STEPS {
+                if self.led_power_stage < LED_POWER_STEPS {
+                    self.led_power_stage += 1;
+                    if self.led_power_stage == LED_POWER_STEPS {
                         self.phase = Phase::On;
                     }
                 }
             }
-            Phase::On => debug_assert_eq!(self.led_power_step, LED_POWER_STEPS)
+            Phase::On => debug_assert_eq!(self.led_power_stage, LED_POWER_STEPS)
         }
     }
 }
@@ -128,7 +126,7 @@ impl<P1: Pin> Devices<P1>
     fn measure_ambient_light_level(&mut self, state: &mut State) -> Result<()> {
         let lux: u32 = self.ambient_light_sensor.read_lux()
             .map_err(|e| Error::from(e))?.round() as u32;
-        state.ambient_light_sensor_lux_buffer.enqueue(lux);
+        state.ambient_light_sensor_lux_buffer.consume(lux);
         Ok(())
     }
 

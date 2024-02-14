@@ -720,6 +720,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "generic-array"
+version = "0.14.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
+dependencies = [
+ "typenum",
+ "version_check",
+]
+
+[[package]]
+name = "generic-array"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fe739944a5406424e080edccb6add95685130b9f160d5407c639c7df0c5836b0"
+dependencies = [
+ "typenum",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.2.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -938,9 +957,10 @@ dependencies = [
  "embuild",
  "esp-idf-hal",
  "esp-idf-svc",
+ "generic-array 1.0.0",
  "itertools",
  "log",
- "ringbuffer",
+ "median",
  "veml7700",
 ]
 
@@ -977,6 +997,15 @@ name = "log"
 version = "0.4.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
+
+[[package]]
+name = "median"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "993f81eac178937d7d54dc7ba7bddd70a526bca92b36d95016add46f59d19754"
+dependencies = [
+ "generic-array 0.14.7",
+]
 
 [[package]]
 name = "memchr"
@@ -1234,12 +1263,6 @@ dependencies = [
  "untrusted",
  "windows-sys 0.48.0",
 ]
-
-[[package]]
-name = "ringbuffer"
-version = "0.15.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3df6368f71f205ff9c33c076d170dd56ebf68e8161c733c0caa07a7a5509ed53"
 
 [[package]]
 name = "rustc-hash"
@@ -1542,6 +1565,12 @@ dependencies = [
  "toml_datetime",
  "winnow",
 ]
+
+[[package]]
+name = "typenum"
+version = "1.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 
 [[package]]
 name = "uncased"

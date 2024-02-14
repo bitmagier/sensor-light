@@ -30,7 +30,8 @@ itertools = "0.12"
 esp-idf-svc = { version = "0.48", default-features = false }
 esp-idf-hal = "0.43"
 veml7700 = { version = "0.2" }
-ringbuffer = "0.15"
+median = "0.3"
+generic-array = "1"
 
 [build-dependencies]
 embuild = "0.31.3"
