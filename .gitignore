@@ -1,4 +1,4 @@
 /code/.embuild
 /code/target/
-/.idea
-
+.idea
+*.drawio.bkp

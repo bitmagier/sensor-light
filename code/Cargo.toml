@@ -1,9 +1,10 @@
 [package]
 name = "led-sensor-bar"
 version = "0.1.0"
-authors = ["Roman Krüger <bitmagier@mailbox.org>"]
+authors = ["bitmagier <bitmagier@mailbox.org>"]
 edition = "2021"
 resolver = "2"
+rust-version = "1.71"
 
 [profile.release]
 opt-level = "s"
@@ -24,10 +25,9 @@ embassy = ["esp-idf-svc/embassy-sync", "esp-idf-svc/critical-section", "esp-idf-
 
 [dependencies]
 log = { version = "0.4", default-features = false }
-anyhow = { version = "1" }
+anyhow = "1"
 esp-idf-svc = { version = "0.48", default-features = false }
-esp-idf-hal = "0.43"
 
 
 [build-dependencies]
-embuild = "0.31.4"
+embuild = "0.31.3"
