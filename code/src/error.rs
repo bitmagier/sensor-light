@@ -1,6 +1,6 @@
 use std::fmt::{Debug, Display, Formatter};
 
-// Error type we map into, when we face one, which does not implement std::error:Error
+// Error type we map into, when we face one, which does not implement std::error::Error
 #[derive(Debug)]
 pub struct Error {
     pub msg: String
