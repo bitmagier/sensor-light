@@ -1,4 +1,4 @@
-We are going to use an ESP32-H2 SoC with Rust embedded Toolchain with standard library.
+We are going to use an ESP32-H2 SoC with Rust embedded Toolchain with `[std].
 For that and this project we need:
 
 - Rust compiler (see www.rust-lang.org) 

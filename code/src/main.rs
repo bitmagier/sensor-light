@@ -123,7 +123,7 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
     // measure ambient light level - only if LED is Off
     fn measure_ambient_light_level(&mut self, state: &mut State) -> Result<()> {
         let lux: u32 = self.ambient_light_sensor.read_lux()
-            .map_err(|e| Error::from(e))?.round() as u32;
+            .map_err(Error::from)?.round() as u32;
         state.ambient_light_sensor_lux_buffer.consume(lux);
         Ok(())
     }
@@ -206,6 +206,7 @@ fn main() -> Result<()> {
 
 // TODO find a suitable project name (working project name "led-sensor-bar").
 //  Candidates:
+//  - floor-illuminator
 //  - floor-light
 //  - smart-night-light
 // TODO disable unused pins

@@ -53,7 +53,7 @@ pub fn init_veml7700<I2C: I2c>(
 
     // Initialize the VEML7700 with I2C
     let mut veml7700_device = Veml7700::new(i2c_driver);
-    veml7700_device.enable().map_err(|e| Error::from(e))?;
+    veml7700_device.enable().map_err(Error::from)?;
     Ok(veml7700_device)
 }
 
