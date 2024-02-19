@@ -206,8 +206,6 @@ fn main() -> Result<()> {
 
 // TODO find a suitable project name (working project name "led-sensor-bar").
 //  Candidates:
-//  - floor-illuminator
 //  - floor-light
-//  - smart-night-light
 // TODO disable unused pins
 

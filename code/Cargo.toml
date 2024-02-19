@@ -1,6 +1,6 @@
 [package]
-name = "led-sensor-bar"
-version = "0.1.0"
+name = "floor-light"
+version = "0.2.0"
 authors = ["bitmagier <bitmagier@mailbox.org>"]
 edition = "2021"
 resolver = "2"
