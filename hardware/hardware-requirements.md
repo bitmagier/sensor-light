@@ -14,4 +14,6 @@ Periphals:
 => Using 5 out of 8 available GPIO pins
 
 # Schaltplan
- 
+
+# Resources
+https://www.electronics-tutorials.ws/de/transistoren/mosfet-als-schalter.html
