@@ -1,0 +1,2 @@
+- Mosfet PMV16XNR  hat geringere Schwellenspannung
+- evtl. Diode vor Präsenz-Sensor um Stromfluss zu unterbinden

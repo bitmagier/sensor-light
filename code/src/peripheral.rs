@@ -3,11 +3,14 @@ use std::num::NonZeroU32;
 use esp_idf_hal::gpio;
 use esp_idf_hal::gpio::{InputPin, InterruptType, Output, OutputPin, Pin, PinDriver, Pull};
 use esp_idf_hal::i2c::{I2c, I2cConfig, I2cDriver};
+use esp_idf_hal::ledc::{LedcChannel, LedcDriver, LedcTimer, LedcTimerDriver, Resolution};
+use esp_idf_hal::ledc::config::TimerConfig;
 use esp_idf_hal::peripheral::Peripheral;
 use esp_idf_hal::prelude::FromValueType;
 use esp_idf_hal::task::notification::Notification;
 use veml7700::Veml7700;
 use crate::error::Error;
+use crate::LED_POWER_STAGES;
 
 pub struct PresenceSensor<P1: Pin> {
     pub gpio_pin: PinDriver<'static, P1, gpio::Input>,
@@ -61,4 +64,22 @@ pub fn init_output_pin<P: OutputPin>(pin: P) -> Result<PinDriver<'static, P, Out
     let mut pin_driver = PinDriver::output(pin)?;
     pin_driver.set_low()?;
     Ok(pin_driver)
+}
+
+pub fn init_led_driver<T: LedcTimer, C: LedcChannel, P: OutputPin>(
+    timer: impl Peripheral<P = T> + 'static, 
+    channel: impl Peripheral<P = C> + 'static, 
+    pin: P
+) -> Result<LedcDriver<'static>> {
+    let timer_driver = LedcTimerDriver::new(
+        timer,
+        &TimerConfig::default()
+            .frequency(50.Hz())
+            .resolution(Resolution::Bits14)
+    )?;
+    Ok(LedcDriver::new(
+        channel,
+        timer_driver,
+        pin
+    )?)
 }

@@ -13,7 +13,21 @@ Periphals:
     - (Radar Sensor: 80 mA average load)
 => Using 5 out of 8 available GPIO pins
 
-# Schaltplan
+# Schaltplan 
+![Wiring_diagram](./wiring_diagram.svg)
+
+# TODO
+## USB Connection Headers
+  - D+ / D- is identified 
+  - 5V to 3.3V LDO
+  - Joint Boot Mode (GPIO8=1, GPIO9=0)
+  - After flash: GPIO 9 high or floating (Default = Pull-Up)
+
+
+
+# Notes
+GPIO Pins 15-21 are not recommended to be used  (SPI0, SPI1, reserved for flash)
 
 # Resources
 https://www.electronics-tutorials.ws/de/transistoren/mosfet-als-schalter.html
+https://praktische-elektronik.dr-k.de/Bauelemente/Be-BC337.html
