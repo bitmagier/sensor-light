@@ -1,6 +1,8 @@
 SoC: ESP-32-h2
 
 SoC Module: ESP32-H2-WROOM-03 with 8 GPIOs
+Needs 3.3V Power Supply delivering 350 mA
+
 
 Periphals:
 - Ambient light sensor | VEML7700 | 1x I2C = 2 GPIOs (I2C capable)
@@ -16,13 +18,11 @@ Periphals:
 # Schaltplan 
 ![Wiring_diagram](./wiring_diagram.svg)
 
-# TODO
 ## USB Connection Headers
-  - D+ / D- is identified 
-  - 5V to 3.3V LDO
+  - GND, 3.3V, D+,  D-, GPIO9 
+  - 5V to 3.3V Logic level converter
   - Joint Boot Mode (GPIO8=1, GPIO9=0)
   - After flash: GPIO 9 high or floating (Default = Pull-Up)
-
 
 
 # Notes
