@@ -1,3 +1,5 @@
+//! Peripheral initialization
+//! 
 use anyhow::Result;
 use std::num::NonZeroU32;
 use esp_idf_hal::gpio;
@@ -10,13 +12,14 @@ use esp_idf_hal::prelude::FromValueType;
 use esp_idf_hal::task::notification::Notification;
 use veml7700::Veml7700;
 use crate::error::Error;
-use crate::LED_POWER_STAGES;
 
 pub struct PresenceSensor<P1: Pin> {
     pub gpio_pin: PinDriver<'static, P1, gpio::Input>,
     pub notification: Notification,
 }
 
+/// Init Radar presence sensor
+///   One may ask why we use an interrupt here? Answer: Because we can!
 pub fn init_presence_sensor_on_interrupt<P: InputPin + OutputPin>(
     gpio_pin: P
 ) -> Result<PresenceSensor<P>> {
@@ -71,15 +74,10 @@ pub fn init_led_driver<T: LedcTimer, C: LedcChannel, P: OutputPin>(
     channel: impl Peripheral<P = C> + 'static, 
     pin: P
 ) -> Result<LedcDriver<'static>> {
-    let timer_driver = LedcTimerDriver::new(
-        timer,
-        &TimerConfig::default()
-            .frequency(50.Hz())
-            .resolution(Resolution::Bits14)
-    )?;
-    Ok(LedcDriver::new(
-        channel,
-        timer_driver,
-        pin
-    )?)
+    let config = TimerConfig::default()
+        .frequency(90.Hz())
+        .resolution(Resolution::Bits14);
+    let timer_driver = LedcTimerDriver::new(timer, &config)?;
+    let driver = LedcDriver::new(channel, timer_driver, pin)?;
+    Ok(driver)
 }

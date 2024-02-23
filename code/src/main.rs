@@ -97,7 +97,7 @@ struct Devices<P1: Pin, P2: Pin> {
     presence_sensor_power_pin: PinDriver<'static, P2, gpio::Output>,
     ambient_light_sensor: Veml7700<I2cDriver<'static>>,
     led_driver: LedcDriver<'static>,
-    led_power_curve_scale_factor: f32
+    led_power_curve_scale_factor: f32,
 }
 
 impl<P1: Pin, P2: Pin> Devices<P1, P2> {
@@ -105,7 +105,7 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
         presence_sensor: PresenceSensor<P1>,
         presence_sensor_power_pin: PinDriver<'static, P2, gpio::Output>,
         ambient_light_sensor: Veml7700<I2cDriver<'static>>,
-        led_driver: LedcDriver<'static>
+        led_driver: LedcDriver<'static>,
     ) -> Self {
         let led_power_curve_scale_factor = Self::calc_led_power_curve_scale_factor(led_driver.get_max_duty());
         Self { presence_sensor, presence_sensor_power_pin, ambient_light_sensor, led_driver, led_power_curve_scale_factor }
@@ -117,7 +117,7 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
 
         if self.presence_sensor.notification.wait(esp_idf_svc::hal::delay::NON_BLOCK).is_some() {
             if state.is_dark_enough_for_operation() {
-                self.on_presence_sensor_event(state);
+                self.react_on_presence_sensor_event(state);
             }
             // re-enable interrupt after we have been triggering (disables the interrupt automatically)
             self.presence_sensor.gpio_pin.enable_interrupt()?;
@@ -134,7 +134,7 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
         Ok(())
     }
 
-    fn on_presence_sensor_event(&mut self, state: &mut State) {
+    fn react_on_presence_sensor_event(&mut self, state: &mut State) {
         match self.presence_sensor.gpio_pin.get_level() {
             Level::Low => {
                 state.phase = Phase::PowerDown;
@@ -170,22 +170,22 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
         Ok(())
     }
 
-    pub fn apply_led_power_level(&self, bar_state: &State) -> Result<()> {
-        let duty = self.calc_led_power_level(bar_state.led_power_stage);
-        self.led_driver.set_duty(duty)?;
-        Ok(())
-    }
-
-
     /// step comes in range [0..LED_POWER_STAGES]
     /// translates to power level in range [0..`max_duty`] via a logarithmic curve,
     /// scaled so that the highest step reaches `self.led_driver.get_max_duty()`
     fn calc_led_power_level(&self, step: usize) -> u32 {
-        ((step + 1).ilog2() as f32 * self.led_power_curve_scale_factor).floor() as u32
+        (Self::led_power_curve(step as u32) as f32 * self.led_power_curve_scale_factor).floor() as u32
     }
-    
+
+
     fn calc_led_power_curve_scale_factor(max_duty: u32) -> f32 {
-        Self::led_power_curve(max_duty as u32) as f32 / max_duty as f32
+        Self::led_power_curve(max_duty) as f32 / (max_duty as f32)
+    }
+
+    pub fn apply_led_power_level(&mut self, bar_state: &State) -> Result<()> {
+        let duty = self.calc_led_power_level(bar_state.led_power_stage);
+        self.led_driver.set_duty(duty)?;
+        Ok(())
     }
 
     // pure (unscaled) logarithmic curve `y = log(x+1) * z`
@@ -201,11 +201,10 @@ fn main() -> Result<()> {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_svc::sys::link_patches();
 
-    // Bind the log crate to the ESP Logging facilities
     esp_idf_svc::log::EspLogger::initialize_default();
 
     let peripherals = Peripherals::take().unwrap();
-    
+
     let mut devices = Devices::new(
         init_presence_sensor_on_interrupt(peripherals.pins.gpio11)?,
         init_output_pin(peripherals.pins.gpio12)?,
@@ -217,8 +216,8 @@ fn main() -> Result<()> {
         init_led_driver(
             peripherals.ledc.timer0,
             peripherals.ledc.channel0,
-            peripherals.pins.gpio1
-        )?
+            peripherals.pins.gpio1,
+        )?,
     );
 
     let mut state = State::new();
@@ -233,5 +232,5 @@ fn main() -> Result<()> {
 }
 
 
-// TODO disable unused pins
+// TODO maybe disable unused pins
 
