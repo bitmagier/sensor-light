@@ -210,8 +210,8 @@ fn main() -> Result<()> {
         init_output_pin(peripherals.pins.gpio12)?,
         init_veml7700(
             peripherals.i2c0,
-            peripherals.pins.gpio4,
             peripherals.pins.gpio5,
+            peripherals.pins.gpio4,
         )?,
         init_led_driver(
             peripherals.ledc.timer0,
