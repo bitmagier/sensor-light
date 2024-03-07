@@ -1,3 +1,9 @@
+#![feature(duration_constructors)]
+
+use std::fmt::{Display, Formatter};
+use std::ops::{Add, Sub};
+use std::time::{Duration, Instant};
+
 use anyhow::Result;
 use esp_idf_hal::ledc::LedcDriver;
 use esp_idf_svc::hal::delay::FreeRtos;
@@ -5,7 +11,8 @@ use esp_idf_svc::hal::gpio;
 use esp_idf_svc::hal::gpio::{Level, Pin, PinDriver};
 use esp_idf_svc::hal::i2c::I2cDriver;
 use esp_idf_svc::hal::prelude::Peripherals;
-use generic_array::typenum::U10;
+use itertools::Itertools;
+use ringbuffer::{AllocRingBuffer, RingBuffer};
 use veml7700::Veml7700;
 
 use crate::error::Error;
@@ -26,7 +33,10 @@ const LED_DIMM_DOWN_STEP_DELAY_MS: u32 = 200;
 
 const LED_DIMM_UP_STEP_DELAY_MS: u32 = 65;
 
+const LUX_BUFFER_SIZE: usize = 10;
 const LUX_THRESHOLD: u32 = 30;
+
+const STATUS_LOG_INTERVAL: Duration = Duration::from_secs(2);
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 enum Phase {
@@ -40,7 +50,7 @@ enum Phase {
 #[derive(Debug)]
 struct State {
     // ambient light level history buffer (last 10 values)
-    pub ambient_light_sensor_lux_buffer: median::stack::Filter<u32, U10>,
+    ambient_light_sensor_lux_buffer: AllocRingBuffer<u32>,
     pub phase: Phase,
     /// range: 0..LED_POWER_STAGES
     pub led_power_stage: usize,
@@ -49,15 +59,30 @@ struct State {
 impl State {
     pub fn new() -> Self {
         State {
-            ambient_light_sensor_lux_buffer: median::stack::Filter::new(),
+            ambient_light_sensor_lux_buffer: AllocRingBuffer::new(LUX_BUFFER_SIZE),
             phase: Phase::Off,
             led_power_stage: 0,
         }
     }
 
+    pub fn lex_level(&self) -> Option<u32> {
+        if self.ambient_light_sensor_lux_buffer.is_empty() {
+            None
+        } else {
+            let sorted = self.ambient_light_sensor_lux_buffer.iter()
+                .sorted()
+                .collect_vec();
+            Some(
+                *sorted[self.ambient_light_sensor_lux_buffer.len() / 2]
+            )
+        }
+    }
+
     pub fn is_dark_enough_for_operation(&self) -> bool {
-        self.ambient_light_sensor_lux_buffer.len() > 0
-            && self.ambient_light_sensor_lux_buffer.median() <= LUX_THRESHOLD
+        match self.lex_level() {
+            Some(lux) => lux <= LUX_THRESHOLD,
+            None => false
+        }
     }
 
     pub fn duty_step_delay_ms(&self) -> u32 {
@@ -89,6 +114,17 @@ impl State {
             }
             Phase::On => debug_assert_eq!(self.led_power_stage, LED_POWER_STAGES)
         }
+    }
+}
+
+impl Display for State {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "dark_enough: {}, lux: {:?}, phase: {:?}, led_power_stage: {}",
+               self.is_dark_enough_for_operation(),
+               self.lex_level(),
+               self.phase,
+               self.led_power_stage
+        )
     }
 }
 
@@ -126,11 +162,11 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
         Ok(())
     }
 
-    // measure ambient light level - only if LED is Off
+    // measure ambient light level - makes only sense to be called if LED is Off
     fn measure_ambient_light_level(&mut self, state: &mut State) -> Result<()> {
         let lux: u32 = self.ambient_light_sensor.read_lux()
             .map_err(Error::from)?.round() as u32;
-        state.ambient_light_sensor_lux_buffer.consume(lux);
+        state.ambient_light_sensor_lux_buffer.push(lux);
         Ok(())
     }
 
@@ -138,11 +174,11 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
         match self.presence_sensor.gpio_pin.get_level() {
             Level::Low => {
                 state.phase = Phase::PowerDown;
-                log::debug!("Dimming down");
+                log::debug!("Powering down");
             }
             Level::High => {
                 state.phase = Phase::PowerUp;
-                log::debug!("Dimming up");
+                log::debug!("Powering up");
             }
         }
     }
@@ -196,12 +232,12 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
 
 
 fn main() -> Result<()> {
-    log::info!("on.");
     // It is necessary to call this function once. Otherwise some patches to the runtime
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_svc::sys::link_patches();
 
     esp_idf_svc::log::EspLogger::initialize_default();
+    log::info!("on.");
 
     let peripherals = Peripherals::take().unwrap();
 
@@ -220,9 +256,12 @@ fn main() -> Result<()> {
         )?,
     );
 
+    log::info!("initialized.");
     let mut state = State::new();
+    let mut last_log_time = Instant::now().sub(Duration::from_mins(1));
 
     loop {
+        log_status(&state, &mut last_log_time);
         FreeRtos::delay_ms(state.duty_step_delay_ms());
         devices.read_sensors(&mut state)?;
         state.calc_dimm_progress();
@@ -231,6 +270,13 @@ fn main() -> Result<()> {
     }
 }
 
+fn log_status(state: &State, last_log_time: &mut Instant) {
+    let now = Instant::now();
+    if last_log_time.add(STATUS_LOG_INTERVAL) <= now {
+        *last_log_time = now;
+        log::info!("{}", state)
+    }
+}
 
 // TODO maybe disable unused pins
 

@@ -8,7 +8,7 @@
 - Resistor 1k Ohm (2x)
 - Resitor 50k Ohm
 - (12V to) 3.3V Step Down (MOSFET) 
-- Trigger PWM 15 A MOSFET (3.3V+ Schaltspannung | 12 V Nutzspannung )
+- Trigger Switch, PWM capable, 15 A (3.3V logic switches 12V with max. 15A load)
 - 5 Pin Connector Mini Socket
 - 12V DC Connector
 - 12V Power Supply

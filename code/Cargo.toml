@@ -27,11 +27,10 @@ embassy = ["esp-idf-svc/embassy-sync", "esp-idf-svc/critical-section", "esp-idf-
 log = { version = "0.4", default-features = false }
 anyhow = "1"
 itertools = "0.12"
+ringbuffer = "0"
 esp-idf-svc = { version = "0.48", default-features = false }
 esp-idf-hal = "=0.43.0"
 veml7700 = { version = "0.2" }
-median = "0.3"
-generic-array = "1"
 
 [build-dependencies]
-embuild = "0.31.3"
+embuild = "0.31"
