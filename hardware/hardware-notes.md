@@ -10,6 +10,7 @@ Peripherals:
 - Ambient light sensor | VEML7700 | 1x I2C = 2 GPIOs (I2C capable)
 - Radar Sensor | LD2410 | 1 GPIO input (floating - no pull-up resistor)  (optionally 2 more Pins for UART rx/tx)
 - LED Dimm PWM => 1 GPIO output (PWM capable)
+	- Gate Treiber Schaltung NPN-Transistor + MOSFET
 - GPIO Switch for 5V Radar Sensor (on/off)
   - ![NPN Transistor Schaltung](parts_spec/npn-transistor-schaltung.png)
     - 1k Ohm Resistor

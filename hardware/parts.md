@@ -6,7 +6,7 @@
 - HLK-LD2410 Radar presence sensor (2x)
 - BC337-40 TO92 NPN Transistor (2x)
 - Resistor 1k Ohm (2x)
-- Resitor 50k Ohm
+- Resistor 50k Ohm
 - (12V to) 3.3V Step Down (MOSFET) 
 - Trigger Switch, PWM capable, 15 A (3.3V logic switches 12V with max. 15A load)
 - 5 Pin Connector Mini Socket
