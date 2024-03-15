@@ -2,7 +2,7 @@
 //!
 use anyhow::Result;
 use esp_idf_hal::gpio;
-use esp_idf_hal::gpio::{InputPin, Output, OutputPin, Pin, PinDriver, Pull};
+use esp_idf_hal::gpio::{InputPin, Output, OutputPin, Pin, PinDriver};
 use esp_idf_hal::i2c::{I2c, I2cConfig, I2cDriver};
 use esp_idf_hal::ledc::{LedcChannel, LedcDriver, LedcTimer, LedcTimerDriver, Resolution};
 use esp_idf_hal::ledc::config::TimerConfig;
@@ -23,43 +23,13 @@ pub fn init_presence_sensor<P: InputPin + OutputPin>(
 ) -> Result<PresenceSensor<P>> {
 
     // radar presence sensor
-    let mut pin_driver = PinDriver::input(gpio_pin)?;
-    pin_driver.set_pull(Pull::UpDown)?;
+    let pin_driver = PinDriver::input(gpio_pin)?;
+    // pin_driver.set_pull(Pull::UpDown)?;
 
     Ok(PresenceSensor {
         sensor_pin: pin_driver
     })
 }
-
-/// Init Radar presence sensor
-///   One may ask why we use an interrupt here? Answer: Because we can!
-// pub fn _init_presence_sensor_on_interrupt<P: InputPin + OutputPin>(
-//     gpio_pin: P
-// ) -> Result<PresenceSensor<P>> {
-// 
-//     // radar presence sensor
-//     let mut pin_driver = PinDriver::input(gpio_pin)?;
-//     
-//     pin_driver.set_pull(Pull::Floating)?;
-//     pin_driver.set_interrupt_type(InterruptType::AnyEdge)?;
-// 
-//     let notification = Notification::new();
-//     let notifier = notification.notifier();
-// 
-//     // Safety: make sure the `Notification` object is not dropped while the subscription is active
-//     unsafe {
-//         pin_driver.subscribe(move || {
-//             notifier.notify_and_yield(NonZeroU32::new(1).unwrap());
-//         })?;
-//     }
-// 
-//     // initial enable of interrupt
-//     pin_driver.enable_interrupt()?;
-// 
-//     Ok(PresenceSensor {
-//         sensor_pin: pin_driver,
-//     })
-// }
 
 pub fn init_veml7700<I2C: I2c>(
     i2c: impl Peripheral<P=I2C> + 'static,
@@ -89,7 +59,7 @@ pub fn init_led_driver<T: LedcTimer, C: LedcChannel, P: OutputPin>(
 ) -> Result<LedcDriver<'static>> {
     let config = TimerConfig::default()
         .frequency(5000.Hz())
-        .resolution(Resolution::Bits12);
+        .resolution(Resolution::Bits10);
     let timer_driver = LedcTimerDriver::new(timer, &config)?;
     let driver = LedcDriver::new(channel, timer_driver, pin)?;
     Ok(driver)

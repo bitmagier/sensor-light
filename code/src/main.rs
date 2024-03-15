@@ -217,6 +217,12 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
 
     pub fn apply_led_power_level(&mut self, bar_state: &State) -> Result<()> {
         let duty = self.calc_led_power_level(bar_state.led_power_stage);
+
+        // We are using a gate driver circuit to feed the PWM signal to the MOSFET.
+        // Because of the nature of that circuit we need to invert our signal, 
+        // (the MOSFET gate is open when we have our IO pin on low).
+        let duty = self.led_driver.get_max_duty() - duty;
+        
         self.led_driver.set_duty(duty)?;
         Ok(())
     }
