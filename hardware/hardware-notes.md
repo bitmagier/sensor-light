@@ -31,6 +31,17 @@ Peripherals:
 - 5m LED channel Housing
 - 5m LED Stripe, 12V (I prefer a warm white (3000-3200K), 8 mm, COB stripe)
 
+# BC337 Biopolar NPN Transistor
+- Gate current needs to be limited by a resistor
+- When used as switch (what we do here), the gate current should be around 1/10 of the collector current
+- It cannot directly switch high workload currents
+
+# IRLB8721PbF N-Channel MOSFET fast, logic level
+- should not be switched directly by Logic level PWM because:
+  - at 3.3 V Gate voltage the resistance (and gate current) is higher than necessary (>= 4.5 V are good)
+  - high PWM frequencies could cause problems (theoretically)
+-> so we use a simple gate driver circuit (suitable for PWM Leds use-case)  
+
 # Resources
 https://www.electronics-tutorials.ws/de/transistoren/mosfet-als-schalter.html
 https://praktische-elektronik.dr-k.de/Bauelemente/Be-BC337.html

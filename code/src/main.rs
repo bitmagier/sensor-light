@@ -175,18 +175,19 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
         match self.presence_sensor.sensor_pin.get_level() {
             Level::Low => {
                 if state.phase != Phase::Off 
-                    && state.phase != Phase::PowerDown {
+                    && state.phase != Phase::PowerDown 
+                {
                     state.phase = Phase::PowerDown;
                     log::info!("Powering down");
                 }
             }
             Level::High => {
-                if state.is_dark_enough_for_operation() {
-                    if state.phase != Phase::On 
-                        && state.phase != Phase::PowerUp {
-                        state.phase = Phase::PowerUp;
-                        log::info!("Powering up");
-                    }
+                if state.is_dark_enough_for_operation()
+                    && state.phase != Phase::On
+                    && state.phase != Phase::PowerUp 
+                {
+                    state.phase = Phase::PowerUp;
+                    log::info!("Powering up");
                 }
             }
         }
