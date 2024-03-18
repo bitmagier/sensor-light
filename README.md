@@ -11,11 +11,15 @@ It just needs 12V DC.
 
 ## Hardware
 
-[Notes on used components](./hardware/hardware-notes.md)
 ![Wiring](./hardware/wiring_diagram.svg)
 
 The wiring diagram includes a separate programming board (on the left side), which can be connected to the main unit via a 5-pin connector.
 The programming board connects to a computer or any other suitable programming environment via a standard USB-C connector.
+
+[Parts](./hardware/parts.md)
+
+[Notes on used components](./hardware/hardware-notes.md)
+
 
 ## Software
 
@@ -25,4 +29,4 @@ A short setup manual can be found [here](./software_setup.md).
 ## Terms
 
 Feel free to use anything here for learning, to build your own LED light bar version or make a product out of it and sell it.
-In case you find it useful, I would be delighted to see a donation in Solana to `FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`.
+In case you find it useful, I would be delighted to see a small donation in Solana to `FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`.
