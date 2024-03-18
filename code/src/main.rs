@@ -12,6 +12,7 @@ use esp_idf_svc::hal::gpio::{Level, Pin, PinDriver};
 use esp_idf_svc::hal::i2c::I2cDriver;
 use esp_idf_svc::hal::prelude::Peripherals;
 use itertools::Itertools;
+use log::LevelFilter;
 use ringbuffer::{AllocRingBuffer, RingBuffer};
 use veml7700::Veml7700;
 
@@ -23,20 +24,18 @@ mod peripheral;
 
 
 /// Number of stages the Led power level is increased from [Phase::Off] to [Phase::On] and vice versa.
-pub const LED_MAX_POWER_STAGE: u32 = 100;
+pub const LED_MAX_POWER_STAGE: u32 = 1000;
 
 /// max. reaction delay when LED Power Phase is in Off or ON state
 const ON_OFF_REACTION_STEP_DELAY_MS: u32 = 500;
 
 // step-delay (and also max. reaction time) when LED Power Phase is in PowerDown or PowerUp state
-const LED_DIMM_DOWN_STEP_DELAY_MS: u32 = 250;
+const LED_DIMM_DOWN_STEP_DELAY_MS: u32 = 10;
 
-const LED_DIMM_UP_STEP_DELAY_MS: u32 = 100;
+const LED_DIMM_UP_STEP_DELAY_MS: u32 = 5;
 
 const LUX_BUFFER_SIZE: usize = 10;
-// const LUX_THRESHOLD: u32 = 30;
-// during testing we use a slightly higher value
-const LUX_THRESHOLD: u32 = 90;
+const LUX_THRESHOLD: u32 = 30;
 
 const STATUS_LOG_INTERVAL: Duration = Duration::from_secs(2);
 
@@ -147,12 +146,12 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
     ) -> Self {
         let led_power_curve_scale_factor = Self::calc_led_power_curve_scale_factor(led_driver.get_max_duty());
         log::info!("LED power curve scale factor: {}", led_power_curve_scale_factor);
-        Self { 
-            presence_sensor, 
-            presence_sensor_power_pin, 
-            ambient_light_sensor, 
-            led_driver, 
-            led_power_curve_scale_factor 
+        Self {
+            presence_sensor,
+            presence_sensor_power_pin,
+            ambient_light_sensor,
+            led_driver,
+            led_power_curve_scale_factor,
         }
     }
     pub fn read_sensors(&mut self, state: &mut State) -> Result<()> {
@@ -174,8 +173,8 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
     fn read_presence_sensor_and_apply_phase(&mut self, state: &mut State) {
         match self.presence_sensor.sensor_pin.get_level() {
             Level::Low => {
-                if state.phase != Phase::Off 
-                    && state.phase != Phase::PowerDown 
+                if state.phase != Phase::Off
+                    && state.phase != Phase::PowerDown
                 {
                     state.phase = Phase::PowerDown;
                     log::info!("Powering down");
@@ -184,7 +183,7 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
             Level::High => {
                 if state.is_dark_enough_for_operation()
                     && state.phase != Phase::On
-                    && state.phase != Phase::PowerUp 
+                    && state.phase != Phase::PowerUp
                 {
                     state.phase = Phase::PowerUp;
                     log::info!("Powering up");
@@ -223,31 +222,30 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
         // Because of the nature of that circuit we need to invert our signal, 
         // (the MOSFET gate is open when we have our IO pin on low).
         let duty = self.led_driver.get_max_duty() - duty;
-        
+
         self.led_driver.set_duty(duty)?;
         Ok(())
     }
 
-    /// Step comes in range [0..LED_POWER_STAGES]
+    /// Step comes in range [0..LED_MAX_POWER_STAGE]
     /// translates to power level in range [0..`max_duty`] via a logarithmic curve,
     /// scaled so that the highest step reaches `self.led_driver.get_max_duty()`
     /// ```
     /// y - duty
-    /// x - power stage [0..100]
+    /// x - power stage [0..LED_MAX_POWER_STAGE]
     /// z - scale factor to reach LED driver max_duty when we are at 100%
-    /// y = log(x+1) * z
     /// ```
     fn calc_led_power_level(&self, power_stage: u32) -> u32 {
         (Self::led_power_curve(power_stage) * self.led_power_curve_scale_factor).round() as u32
     }
 
     fn calc_led_power_curve_scale_factor(led_driver_max_duty: u32) -> f32 {
-        (led_driver_max_duty as f32) / Self::led_power_curve(LED_MAX_POWER_STAGE) 
+        (led_driver_max_duty as f32) / (Self::led_power_curve(LED_MAX_POWER_STAGE))
     }
 
-    // pure (unscaled) logarithmic curve `y = log(x+1)`
+    // pure (unscaled) logarithmic curve
     fn led_power_curve(power_stage: u32) -> f32 {
-        ((power_stage + 1) as f32).log2()
+        f32::ln((power_stage as f32) / 50.0 + 1.0)
     }
 }
 
@@ -270,10 +268,11 @@ fn main() -> Result<()> {
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_svc::sys::link_patches();
 
-    
     // looks like we can't adjust the maximum loglevel (which is Info) as it seems to be hard-coded in EspLogger 
     esp_idf_svc::log::EspLogger::initialize_default();
-    
+    // remove for debugging:
+    esp_idf_svc::log::set_target_level("", LevelFilter::Off)?;
+
     log::info!("on.");
 
     let peripherals = Peripherals::take().unwrap();
@@ -292,7 +291,7 @@ fn main() -> Result<()> {
             peripherals.pins.gpio11,
         )?,
     );
-    
+
     log::info!("initialized.");
     let mut state = State::new();
     let mut last_log_time = Instant::now().sub(Duration::from_mins(1));
@@ -306,5 +305,3 @@ fn main() -> Result<()> {
         devices.steer_presence_sensor(&mut state)?;
     }
 }
-
-// TODO maybe disable unused pins

@@ -1,5 +1,5 @@
 //! Peripheral initialization
-//!
+
 use anyhow::Result;
 use esp_idf_hal::gpio;
 use esp_idf_hal::gpio::{InputPin, Output, OutputPin, Pin, PinDriver, Pull};
@@ -17,7 +17,6 @@ pub struct PresenceSensor<P1: Pin> {
 }
 
 /// Init Radar presence sensor
-///   One may ask why we use an interrupt here? Answer: Because we can!
 pub fn init_presence_sensor<P: InputPin + OutputPin>(
     gpio_pin: P
 ) -> Result<PresenceSensor<P>> {
@@ -59,7 +58,7 @@ pub fn init_led_driver<T: LedcTimer, C: LedcChannel, P: OutputPin>(
 ) -> Result<LedcDriver<'static>> {
     let config = TimerConfig::default()
         .frequency(5000.Hz())
-        .resolution(Resolution::Bits11);
+        .resolution(Resolution::Bits12);
     let timer_driver = LedcTimerDriver::new(timer, &config)?;
     let mut driver = LedcDriver::new(channel, timer_driver, pin)?;
     driver.enable()?;
