@@ -269,9 +269,10 @@ fn main() -> Result<()> {
     esp_idf_svc::sys::link_patches();
 
     // looks like we can't adjust the maximum loglevel (which is Info) as it seems to be hard-coded in EspLogger 
-    esp_idf_svc::log::EspLogger::initialize_default();
     // remove for debugging:
     esp_idf_svc::log::set_target_level("", LevelFilter::Off)?;
+    esp_idf_svc::log::EspLogger::initialize_default();
+    
 
     log::info!("on.");
 
