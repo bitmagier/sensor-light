@@ -9,7 +9,7 @@ _It does not use Wifi or Zigbee features of the ESP32-H2 SoC and does not connec
 
 ## Sketch
 
-![Sketch](./hardware/Floor_light_sketch.jpg)
+![Sketch](./hardware/Floor_light_sketch.png)
 
 ## Hardware
 
