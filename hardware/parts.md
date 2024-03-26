@@ -6,7 +6,10 @@
 - HLK-LD2410 Radar presence sensor (2x)
 - BC337-40 TO92 NPN Transistor (2x)
 - IRLB8721PbF N-Channel MOSFET
-- Resistor 1 kΩ, 10 kΩ, 3.6 kΩ, 150 Ω
+- Resistor 1 kΩ
+- Resistor 10 kΩ
+- Resistor 3.6 kΩ
+- Resistor 150 Ω (optional)
 - (12V to) 3.3V Step Down (MOSFET) 
 - 5m LED Stripe
 - 12V DC Connector

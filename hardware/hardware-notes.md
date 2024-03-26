@@ -1,10 +1,11 @@
+# Hardware notes
+
 Core SoC: ESP-32-H2
 
-We are not using the Wifi or Zigbee feature for this embedded project.
-
 We use SoC Module: ESP32-H2-WROOM-03.
-This chip needs a 3.3V Power Supply delivering 350 mA.
+(not using the Wifi or Zigbee feature for this embedded project)
 
+This chip needs a 3.3V Power Supply delivering 350 mA.
 
 Peripherals:
 - Ambient light sensor | VEML7700 | 1x I2C = 2 GPIOs (I2C capable)
