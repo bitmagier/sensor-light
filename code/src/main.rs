@@ -12,7 +12,6 @@ use esp_idf_svc::hal::gpio::{Level, Pin, PinDriver};
 use esp_idf_svc::hal::i2c::I2cDriver;
 use esp_idf_svc::hal::prelude::Peripherals;
 use itertools::Itertools;
-use log::LevelFilter;
 use ringbuffer::{AllocRingBuffer, RingBuffer};
 use veml7700::Veml7700;
 

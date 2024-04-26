@@ -19,14 +19,14 @@ Peripherals:
     - (Radar Sensor: 80 mA average load)
 
 ## USB Connection Headers
-  - GND, 3.3V, D+,  D-, GPIO9 
-  - 5V to 3.3V Logic level converter
-  - ESP needs to be set to 'Joint Boot Mode' (GPIO8=1, GPIO9=0)
-  - After flash: GPIO 9 high or floating (Default = Pull-Up)
+  - Pins: GND, 3.3V, D+,  D-, GPIO9 
+  - 5V to 3.3V Converter for USB power line (Data lines are already on 3.3V level)
+  - ESP needs to be set to 'Joint Boot Mode' (GPIO8=1 (internal default), GPIO9=0)
+  - After flash: GPIO 9 high or floating (internal default = Pull-Up)
 
 # Notes
 - GPIO Pins 15-21 are not recommended to be used  (SPI0, SPI1, reserved for flash)
-- GPIO Pins greater than 20 are not yet available in the esp-idf library codebase. 
+- GPIO Pins greater than 20 are not yet available in the esp-idf library codebase 
 
 # LED and Housing
 - 5m LED channel Housing

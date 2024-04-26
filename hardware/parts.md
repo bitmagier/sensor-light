@@ -20,7 +20,7 @@
 - 5m LED Housing
 
 ## Flash Adapter
-- 2-channel IIC I2C Logic-Level-Converter Bi-Directional Modul 5V to 3,3 V (for Arduino)
+- 5V to 3,3 V Step Down (e.g. AMS1117)
 - USB-C Plug Female 
 - 50 k Ohm Resistor
 - 5 Pin Connector Cable + Mini Plug
