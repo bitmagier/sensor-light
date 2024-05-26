@@ -7,6 +7,10 @@ This automatic floor light is completely self-contained.
 
 _It does not use Wifi or Zigbee features of the ESP32-H2 SoC and does not connect to a smart home system with that firmware here - but one may add such a feature smoothly, of course._
 
+Status:
+- Software: ready, tested
+- Hardware: alpha, testing and improving in progress
+
 ## Sketch
 
 ![Sketch](./hardware/Floor_light_sketch.png)
