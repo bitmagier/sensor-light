@@ -5,7 +5,7 @@ Core SoC: ESP-32-H2
 We use SoC Module: ESP32-H2-WROOM-03.
 (not using the Wifi or Zigbee feature for this embedded project)
 
-This chip needs a 3.3V Power Supply delivering 350 mA.
+This chip needs a 3.3V (+/- 0.3V) Power Supply delivering 350 mA.
 
 Peripherals:
 - Ambient light sensor | VEML7700 | 1x I2C = 2 GPIOs (I2C capable)
@@ -25,7 +25,6 @@ Peripherals:
   - After flash: GPIO 9 high or floating (internal default = Pull-Up)
 
 # Notes
-- GPIO Pins 15-21 are not recommended to be used  (SPI0, SPI1, reserved for flash)
 - GPIO Pins greater than 20 are not yet available in the esp-idf library codebase 
 
 # LED and Housing

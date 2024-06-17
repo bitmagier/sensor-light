@@ -1,4 +1,4 @@
-# Automatic Floor Light
+# Sensor Light
 
 A smart light bar — illuminates dark places on-demand by gently powering-up/down a LED stripe depending on the ambient light level and a detected human presence.
 
@@ -13,7 +13,7 @@ Status:
 
 ## Sketch
 
-![Sketch](./hardware/Floor_light_sketch.png)
+![Sketch](./hardware/light_bar_sketch.png)
 
 ## Hardware
 
