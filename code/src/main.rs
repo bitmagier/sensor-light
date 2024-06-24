@@ -270,7 +270,7 @@ fn main() -> Result<()> {
     // looks like we can't adjust the maximum loglevel (which is Info) as it seems to be hard-coded in EspLogger 
     esp_idf_svc::log::EspLogger::initialize_default();
 
-    log::info!("on.");
+    log::info!("starting up");
 
     let peripherals = Peripherals::take().unwrap();
 
@@ -283,13 +283,13 @@ fn main() -> Result<()> {
             peripherals.pins.gpio4,
         )?,
         init_led_driver(
-            peripherals.ledc.timer0,
             peripherals.ledc.channel0,
+            peripherals.ledc.timer0,
             peripherals.pins.gpio11,
         )?,
     );
 
-    log::info!("initialized.");
+    log::info!("peripherals initialized");
     let mut state = State::new();
     let mut last_log_time = Instant::now().sub(Duration::from_mins(1));
 

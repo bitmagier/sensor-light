@@ -51,14 +51,35 @@ pub fn init_output_pin<P: OutputPin>(pin: P) -> Result<PinDriver<'static, P, Out
     Ok(pin_driver)
 }
 
-pub fn init_led_driver<T: LedcTimer, C: LedcChannel, P: OutputPin>(
-    timer: impl Peripheral<P=T> + 'static,
+// pub fn init_led_driver<T: LedcTimer, C: LedcChannel, P: OutputPin>(
+//     timer: impl Peripheral<P=T> + 'static,
+//     channel: impl Peripheral<P=C> + 'static,
+//     pin: P,
+// ) -> Result<LedcDriver<'static>> {
+//     let config = TimerConfig::default()
+//         .frequency(5000.Hz())
+//         .resolution(Resolution::Bits12);
+// 
+//     let timer_driver = LedcTimerDriver::new(timer, &config)?;
+//     let mut driver = LedcDriver::new(channel, timer_driver, pin)?;
+//     driver.enable()?;
+//     Ok(driver)
+// }
+
+
+pub fn init_led_driver<C, T>(
     channel: impl Peripheral<P=C> + 'static,
-    pin: P,
-) -> Result<LedcDriver<'static>> {
+    timer: impl Peripheral<P=T> + 'static,
+    pin: impl Peripheral<P=impl OutputPin> + 'static,
+) -> Result<LedcDriver<'static>>
+where
+    C: LedcChannel<SpeedMode=<T as LedcTimer>::SpeedMode>,
+    T: LedcTimer + 'static,
+{
     let config = TimerConfig::default()
         .frequency(5000.Hz())
         .resolution(Resolution::Bits12);
+
     let timer_driver = LedcTimerDriver::new(timer, &config)?;
     let mut driver = LedcDriver::new(channel, timer_driver, pin)?;
     driver.enable()?;
