@@ -37,6 +37,7 @@ pub fn init_veml7700<I2C: I2c>(
 ) -> Result<Veml7700<I2cDriver<'static>>>
 {
     let config = I2cConfig::new().baudrate(100.kHz().into());
+    
     let i2c_driver = I2cDriver::new(i2c, sda, scl, &config)?;
 
     // Initialize the VEML7700 with I2C
@@ -50,22 +51,6 @@ pub fn init_output_pin<P: OutputPin>(pin: P) -> Result<PinDriver<'static, P, Out
     pin_driver.set_low()?;
     Ok(pin_driver)
 }
-
-// pub fn init_led_driver<T: LedcTimer, C: LedcChannel, P: OutputPin>(
-//     timer: impl Peripheral<P=T> + 'static,
-//     channel: impl Peripheral<P=C> + 'static,
-//     pin: P,
-// ) -> Result<LedcDriver<'static>> {
-//     let config = TimerConfig::default()
-//         .frequency(5000.Hz())
-//         .resolution(Resolution::Bits12);
-// 
-//     let timer_driver = LedcTimerDriver::new(timer, &config)?;
-//     let mut driver = LedcDriver::new(channel, timer_driver, pin)?;
-//     driver.enable()?;
-//     Ok(driver)
-// }
-
 
 pub fn init_led_driver<C, T>(
     channel: impl Peripheral<P=C> + 'static,

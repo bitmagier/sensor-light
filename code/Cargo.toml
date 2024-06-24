@@ -1,6 +1,6 @@
 [package]
 name = "floor-light"
-version = "0.8.0"
+version = "0.8.1"
 authors = ["bitmagier <bitmagier@mailbox.org>"]
 edition = "2021"
 resolver = "2"
@@ -29,8 +29,6 @@ anyhow = "1.0"
 itertools = "0.13"
 ringbuffer = "0.15"
 esp-idf-svc = { version = "0.49.0", default-features = false }
-# esp-idf-svc = { version = "0.48", default-features = false }
-# esp-idf-hal = "=0.43.0"
 esp-idf-hal = "0.44.0"
 veml7700 = { version = "0.2" }
 
