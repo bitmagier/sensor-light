@@ -54,6 +54,7 @@ struct State {
     pub phase: Phase,
     /// range: 0..LED_POWER_STAGES
     pub led_power_stage: u32,
+    pub duty: u32
 }
 
 impl State {
@@ -62,6 +63,7 @@ impl State {
             ambient_light_sensor_lux_buffer: AllocRingBuffer::new(LUX_BUFFER_SIZE),
             phase: Phase::Off,
             led_power_stage: 0,
+            duty: 0
         }
     }
 
@@ -123,7 +125,7 @@ impl Display for State {
                self.is_dark_enough_for_operation(),
                self.lux_level(),
                self.phase,
-               self.led_power_stage,
+               self.led_power_stage
         )
     }
 }
@@ -214,15 +216,15 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
         Ok(())
     }
 
-    pub fn apply_led_power_level(&mut self, bar_state: &State) -> Result<()> {
-        let duty = self.calc_led_power_level(bar_state.led_power_stage);
+    pub fn apply_led_power_level(&mut self, bar_state: &mut State) -> Result<()> {
+        bar_state.duty = self.calc_led_power_level(bar_state.led_power_stage);
 
-        // We are using a gate driver circuit to feed the PWM signal to the MOSFET.
-        // Because of the nature of that circuit we need to invert our signal, 
-        // (the MOSFET gate is open when we have our IO pin on low).
-        let duty = self.led_driver.get_max_duty() - duty;
+        // We are using a gate driver circuit to feed the PWM signal to a N-channel MOSFET.
+        // Because of the nature of that circuit we need to invert our signal. 
+        // (MOSFET's gate is open when we have our IO pin on low).
+        let inverted_duty = self.led_driver.get_max_duty() - bar_state.duty;
 
-        self.led_driver.set_duty(duty)?;
+        self.led_driver.set_duty(inverted_duty)?;
         Ok(())
     }
 
@@ -252,12 +254,13 @@ fn log_status<P1: Pin, P2: Pin>(state: &State, devices: &Devices<P1, P2>, last_l
     let now = Instant::now();
     if last_log_time.add(STATUS_LOG_INTERVAL) <= now {
         *last_log_time = now;
-        log::info!("{} | Hardware: Presence sensor: enabled: {}, signal: {:?}, LED_duty: {} / {}", 
+        log::info!("{} , duty: {}/{} | Hardware: Presence sensor: enabled: {}, Sensor-signal: {:?}", 
             state,
+            state.duty, // use the non-inverted logical value here for better readability
+            devices.led_driver.get_max_duty(),
             devices.presence_sensor_power_pin.is_set_high(),
             devices.presence_sensor.sensor_pin.get_level(),
-            devices.led_driver.get_duty(),
-            devices.led_driver.get_max_duty(),
+            
         )
     }
 }
@@ -298,7 +301,7 @@ fn main() -> Result<()> {
         FreeRtos::delay_ms(state.duty_step_delay_ms());
         devices.read_sensors(&mut state)?;
         state.calc_dimm_progress();
-        devices.apply_led_power_level(&state)?;
+        devices.apply_led_power_level(&mut state)?;
         devices.steer_presence_sensor(&mut state)?;
     }
 }
