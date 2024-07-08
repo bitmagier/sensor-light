@@ -17,7 +17,7 @@ Status:
 
 ## Hardware
 
-![Wiring](./hardware/wiring_diagram.svg)
+![Wiring](./hardware/wiring_diagram_bright.svg)
 
 The wiring diagram includes a separate programming board (on the left side), which is can be connected to the main unit via a 5-pin connector. It's required to flash the ESP32-H2 once it's soldered.
 The programming board connects to a computer or any other suitable programming environment via a standard USB-C connector. 
