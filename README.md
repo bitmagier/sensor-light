@@ -8,8 +8,8 @@ This automatic floor light is completely self-contained.
 _It does not use Wifi or Zigbee features of the ESP32-H2 SoC and does not connect to a smart home system with that firmware here - but one may add such a feature smoothly, of course._
 
 Status:
-- Software: ready, tested
-- Hardware: alpha, testing and improving in progress
+- Software: ready, tested; release-candidate
+- Hardware: beta; release-candidate
 
 ## Sketch
 
@@ -19,10 +19,11 @@ Status:
 
 ![Wiring](./hardware/wiring_diagram_bright.svg)
 
-The wiring diagram includes a separate programming board (on the left side), which is can be connected to the main unit via a 5-pin connector. It's required to flash the ESP32-H2 once it's soldered.
+The wiring diagram includes a separate flash adapter (on the left side), which is can be connected to the main unit via a 4-pin connector. It's required to flash the ESP32-H2 once it's soldered.
 The programming board connects to a computer or any other suitable programming environment via a standard USB-C connector. 
-Please note, that this programming board is not required in a scenario, when one has it's own way of initial flashing the SoC before soldering and don't wish to update the firmware later.
-
+Please note:
+  - This programming board is not strictly required in a scenario, when one has its own way of initial flashing the SoC before soldering and don't wish to update the firmware later
+  - While flashing / monitoring the chip via the flash adapter, we still need power supply through the 12V socket
 
 [Parts](./hardware/parts.md)
 
@@ -50,8 +51,7 @@ To flash the ESP:
 
 ## Terms & Conditions
 
-Feel free to use anything here for learning, to build your own version or make a product out of it and sell it.
-In case you find it useful, the author would be delighted to notice a small donation in Solana coins to `FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`.
+Feel free to use anything here for learning, building your own version or make a product out of it and sell it.
+In case you find it useful, the author would be delighted to see a donation in Solana coins to `FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`.
 
-
-_bitmagier, March 2024_
+_bitmagier, July 2024_

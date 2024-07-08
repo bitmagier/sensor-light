@@ -1,7 +1,7 @@
 # Parts
 
-## LED bar 5m
-- ESP32-H2-WROOM-3-N2
+## LED Bar 5m
+- ESP32-H2-WROOM-03-N2
 - VEML7700 Ambient Light Sensor
 - HLK-LD2410 Radar presence sensor (2x)
 - BC337-40 TO92 NPN Transistor (2x)
@@ -20,5 +20,4 @@
 
 ## Flash Adapter
 - USB-C Plug Female 
-- 50 k Ohm Resistor
-- 5 Pin Connector Cable + Mini Plug
+- 4 Pin Connector Plug + Cable
