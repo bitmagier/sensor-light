@@ -121,11 +121,11 @@ impl State {
 
 impl Display for State {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "logic state: dark_enough: {}, lux: {:?}, phase: {:?}, led_power_stage: {}",
+        write!(f, "logic state: dark_enough: {}, lux: {:?}, phase: {:?}, led_power_stage: {:.0}%",
                self.is_dark_enough_for_operation(),
                self.lux_level(),
                self.phase,
-               self.led_power_stage
+               self.led_power_stage / LED_MAX_POWER_STAGE 
         )
     }
 }
@@ -256,7 +256,8 @@ fn log_status<P1: Pin, P2: Pin>(state: &State, devices: &Devices<P1, P2>, last_l
         *last_log_time = now;
         log::info!("{} , duty: {}/{} | Hardware: Presence sensor: enabled: {}, Sensor-signal: {:?}", 
             state,
-            state.duty, // use the non-inverted logical value here for better readability
+            // state.duty, // use the non-inverted logical value here for better readability
+            devices.led_driver.get_duty(),
             devices.led_driver.get_max_duty(),
             devices.presence_sensor_power_pin.is_set_high(),
             devices.presence_sensor.sensor_pin.get_level(),
