@@ -125,7 +125,7 @@ impl Display for State {
                self.is_dark_enough_for_operation(),
                self.lux_level(),
                self.phase,
-               self.led_power_stage / LED_MAX_POWER_STAGE 
+               100.0 * self.led_power_stage as f32 / LED_MAX_POWER_STAGE as f32 
         )
     }
 }
@@ -256,8 +256,7 @@ fn log_status<P1: Pin, P2: Pin>(state: &State, devices: &Devices<P1, P2>, last_l
         *last_log_time = now;
         log::info!("{} , duty: {}/{} | Hardware: Presence sensor: enabled: {}, Sensor-signal: {:?}", 
             state,
-            // state.duty, // use the non-inverted logical value here for better readability
-            devices.led_driver.get_duty(),
+            state.duty, // use the non-inverted logical value here for better readability
             devices.led_driver.get_max_duty(),
             devices.presence_sensor_power_pin.is_set_high(),
             devices.presence_sensor.sensor_pin.get_level(),
@@ -267,7 +266,7 @@ fn log_status<P1: Pin, P2: Pin>(state: &State, devices: &Devices<P1, P2>, last_l
 }
 
 fn main() -> Result<()> {
-    // It is necessary to call this function once. Otherwise some patches to the runtime
+    // It is necessary to call this function once, otherwise some patches to the runtime
     // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_svc::sys::link_patches();
 
@@ -288,7 +287,7 @@ fn main() -> Result<()> {
         )?,
         init_led_driver(
             peripherals.ledc.channel0,
-            peripherals.ledc.timer0,
+            peripherals.ledc.timer1,
             peripherals.pins.gpio11,
         )?,
     );

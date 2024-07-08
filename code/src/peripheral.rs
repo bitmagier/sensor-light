@@ -61,11 +61,11 @@ where
     C: LedcChannel<SpeedMode=<T as LedcTimer>::SpeedMode>,
     T: LedcTimer + 'static,
 {
-    let config = TimerConfig::default()
+    let timer_config = TimerConfig::default()
         .frequency(5000.Hz())
         .resolution(Resolution::Bits12);
 
-    let timer_driver = LedcTimerDriver::new(timer, &config)?;
+    let timer_driver = LedcTimerDriver::new(timer, &timer_config)?;
     let mut driver = LedcDriver::new(channel, timer_driver, pin)?;
     driver.enable()?;
     Ok(driver)
