@@ -4,7 +4,7 @@ target = "riscv32imac-esp-espidf"
 [target.riscv32imac-esp-espidf]
 linker = "ldproxy"
 # runner = "espflash flash --monitor"
-runner = "espflash flash --chip esp32h2 --flash-size 2mb --before usb-reset --after hard-reset --flash-mode dio --monitor"
+runner = "espflash flash --chip esp32h2 --flash-size 2mb --monitor"
 rustflags = [ "--cfg",  "espidf_time64"] # Extending time_t for ESP IDF 5: https://github.com/esp-rs/rust/issues/110
 
 [unstable]
