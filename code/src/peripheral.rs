@@ -62,7 +62,7 @@ where
     T: LedcTimer + 'static,
 {
     let timer_config = TimerConfig::default()
-        .frequency(5000.Hz())
+        .frequency(5.kHz().into())
         .resolution(Resolution::Bits12);
 
     let timer_driver = LedcTimerDriver::new(timer, &timer_config)?;
