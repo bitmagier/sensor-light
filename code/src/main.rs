@@ -277,6 +277,11 @@ fn main() -> Result<()> {
 
     let peripherals = Peripherals::take().unwrap();
 
+    log::info!("Presence sensor IN on GPIO 1");
+    log::info!("Presence sensor GND switch OUT on GPIO 12");
+    log::info!("VEML7700 ambient light sensor I2C: [SDA: GPIO 5, SCL: GPIO 4]");
+    log::info!("LED PWM OUT on GPIO 11");
+
     let mut devices = Devices::new(
         init_presence_sensor(peripherals.pins.gpio1)?,
         init_output_pin(peripherals.pins.gpio12)?,
@@ -291,8 +296,9 @@ fn main() -> Result<()> {
             peripherals.pins.gpio11,
         )?,
     );
-
+    
     log::info!("peripherals initialized");
+    
     let mut state = State::new();
     let mut last_log_time = Instant::now().sub(Duration::from_mins(1));
 
