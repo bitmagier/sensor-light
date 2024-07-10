@@ -291,8 +291,8 @@ fn main() -> Result<()> {
             peripherals.pins.gpio4,
         )?,
         init_led_driver(
-            peripherals.ledc.channel0,
-            peripherals.ledc.timer0,
+            peripherals.ledc.channel1,
+            peripherals.ledc.timer1,
             peripherals.pins.gpio22,
         )?,
     );
