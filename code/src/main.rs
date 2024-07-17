@@ -280,7 +280,7 @@ fn main() -> Result<()> {
     log::info!("Presence sensor IN on GPIO 1");
     log::info!("Presence sensor GND switch OUT on GPIO 12");
     log::info!("VEML7700 ambient light sensor I2C: [SDA: GPIO 5, SCL: GPIO 4]");
-    log::info!("LED PWM OUT on GPIO 22");
+    log::info!("LED PWM OUT on GPIO 11");
 
     let mut devices = Devices::new(
         init_presence_sensor(peripherals.pins.gpio1)?,
@@ -291,9 +291,9 @@ fn main() -> Result<()> {
             peripherals.pins.gpio4,
         )?,
         init_led_driver(
-            peripherals.ledc.channel1,
-            peripherals.ledc.timer1,
-            peripherals.pins.gpio22,
+            peripherals.ledc.channel0,
+            peripherals.ledc.timer0,
+            peripherals.pins.gpio11,
         )?,
     );
     
