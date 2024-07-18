@@ -12,10 +12,12 @@ Status:
 - Hardware: beta; release-candidate
 
 ## Sketch
-
 ![Sketch](./hardware/light_bar_sketch.png)
+_TODO replace with final photo_
 
 ## Hardware
+
+### Wiring diagram
 
 ![Wiring](./hardware/wiring_diagram_bright.svg)
 
@@ -25,9 +27,12 @@ Please note:
   - This programming board is not strictly required in a scenario, when one has its own way of initial flashing the SoC before soldering and don't wish to update the firmware later
   - While flashing / monitoring the chip via the flash adapter, we still need power supply through the 12V socket
 
-[Parts](./hardware/parts.md)
+### [Parts]((./hardware/parts.md))
 
-[Notes on used components](./hardware/hardware-notes.md)
+### References
+
+- [Switching with transistors](https://dl6gl.de/schalten-mit-transistoren.html)
+
 
 ## Software
 
@@ -48,10 +53,10 @@ For that and this project we need:
 To flash the ESP:
 - `cargo run`
 
-
 ## Terms & Conditions
+Feel free to use anything here for learning, building your own version or make a product out of it and even sell it.
+In case you find it useful, the author would be delighted to notice a small donation in [Solana](https://solana.com/) to his wallet: `FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`.
 
-Feel free to use anything here for learning, building your own version or make a product out of it and sell it.
-In case you find it useful, the author would be delighted to see a donation in Solana coins to `FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`.
+Pull requests are welcome.
 
 _bitmagier, July 2024_
