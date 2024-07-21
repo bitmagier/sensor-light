@@ -23,7 +23,10 @@ mod peripheral;
 
 
 /// Number of stages the Led power level is increased from [Phase::Off] to [Phase::On] and vice versa.
-pub const LED_MAX_POWER_STAGE: u32 = 1000;
+pub const LED_POWER_STAGES: u32 = 1000;
+
+/// Percentage of hardware maximum LED brightness we want to reach
+pub const LED_MAX_POWER_LEVEL_PERCENT: f32 = 0.5; 
 
 /// max. reaction delay when LED Power Phase is in Off or ON state
 const ON_OFF_REACTION_STEP_DELAY_MS: u32 = 500;
@@ -31,10 +34,10 @@ const ON_OFF_REACTION_STEP_DELAY_MS: u32 = 500;
 // step-delay (and also max. reaction time) when LED Power Phase is in PowerDown or PowerUp state
 const LED_DIMM_DOWN_STEP_DELAY_MS: u32 = 10;
 
-const LED_DIMM_UP_STEP_DELAY_MS: u32 = 5;
+const LED_DIMM_UP_STEP_DELAY_MS: u32 = 6;
 
 const LUX_BUFFER_SIZE: usize = 10;
-const LUX_THRESHOLD: u32 = 30;
+const LUX_THRESHOLD: u32 = 12;
 
 const STATUS_LOG_INTERVAL: Duration = Duration::from_secs(2);
 
@@ -107,14 +110,14 @@ impl State {
                 }
             }
             Phase::PowerUp => {
-                if self.led_power_stage < LED_MAX_POWER_STAGE {
+                if self.led_power_stage < LED_POWER_STAGES {
                     self.led_power_stage += 1;
                 }
-                if self.led_power_stage == LED_MAX_POWER_STAGE {
+                if self.led_power_stage == LED_POWER_STAGES {
                     self.phase = Phase::On;
                 }
             }
-            Phase::On => debug_assert_eq!(self.led_power_stage, LED_MAX_POWER_STAGE)
+            Phase::On => debug_assert_eq!(self.led_power_stage, LED_POWER_STAGES)
         }
     }
 }
@@ -125,7 +128,7 @@ impl Display for State {
                self.is_dark_enough_for_operation(),
                self.lux_level(),
                self.phase,
-               100.0 * self.led_power_stage as f32 / LED_MAX_POWER_STAGE as f32 
+               100.0 * self.led_power_stage as f32 / LED_POWER_STAGES as f32 
         )
     }
 }
@@ -241,7 +244,7 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
     }
 
     fn calc_led_power_curve_scale_factor(led_driver_max_duty: u32) -> f32 {
-        (led_driver_max_duty as f32) / (Self::led_power_curve(LED_MAX_POWER_STAGE))
+        (led_driver_max_duty as f32 * LED_MAX_POWER_LEVEL_PERCENT) / (Self::led_power_curve(LED_POWER_STAGES))
     }
 
     // pure (unscaled) logarithmic curve
@@ -281,6 +284,7 @@ fn main() -> Result<()> {
     log::info!("Presence sensor GND switch OUT on GPIO 12");
     log::info!("VEML7700 ambient light sensor I2C: [SDA: GPIO 4, SCL: GPIO 5]");
     log::info!("LED PWM OUT on GPIO 11");
+    log::info!("LED maximum power level set to {:.0}%", 100.0 * LED_MAX_POWER_LEVEL_PERCENT);
 
     let mut devices = Devices::new(
         init_presence_sensor(peripherals.pins.gpio1)?,
