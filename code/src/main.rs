@@ -273,13 +273,13 @@ fn main() -> Result<()> {
     // looks like we can't adjust the maximum loglevel (which is Info) as it seems to be hard-coded in EspLogger 
     esp_idf_svc::log::EspLogger::initialize_default();
 
-    log::info!("starting up");
+    log::info!("Starting up");
 
     let peripherals = Peripherals::take().unwrap();
 
     log::info!("Presence sensor IN on GPIO 1");
     log::info!("Presence sensor GND switch OUT on GPIO 12");
-    log::info!("VEML7700 ambient light sensor I2C: [SDA: GPIO 5, SCL: GPIO 4]");
+    log::info!("VEML7700 ambient light sensor I2C: [SDA: GPIO 4, SCL: GPIO 5]");
     log::info!("LED PWM OUT on GPIO 11");
 
     let mut devices = Devices::new(
@@ -287,8 +287,8 @@ fn main() -> Result<()> {
         init_output_pin(peripherals.pins.gpio12)?,
         init_veml7700(
             peripherals.i2c0,
-            peripherals.pins.gpio5,
             peripherals.pins.gpio4,
+            peripherals.pins.gpio5,
         )?,
         init_led_driver(
             peripherals.ledc.channel0,
@@ -297,7 +297,7 @@ fn main() -> Result<()> {
         )?,
     );
     
-    log::info!("peripherals initialized");
+    log::info!("Peripherals initialized");
     
     let mut state = State::new();
     let mut last_log_time = Instant::now().sub(Duration::from_mins(1));
