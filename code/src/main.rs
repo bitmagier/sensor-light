@@ -78,7 +78,7 @@ impl State {
                 .sorted()
                 .collect_vec();
             Some(
-                *sorted[self.ambient_light_sensor_lux_buffer.len() / 2]
+                *sorted[sorted.len() / 2]
             )
         }
     }
@@ -197,7 +197,7 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
     }
 
     pub fn steer_presence_sensor(&mut self, state: &mut State) -> Result<()> {
-        if state.is_dark_enough_for_operation() || state.phase != Phase::Off {
+        if state.phase != Phase::Off || state.is_dark_enough_for_operation() {
             self.enable_presence_sensor()?;
         } else {
             self.disable_presence_sensor()?;
@@ -206,16 +206,12 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
     }
 
     fn enable_presence_sensor(&mut self) -> Result<()> {
-        if !self.presence_sensor_power_pin.is_set_high() {
-            self.presence_sensor_power_pin.set_high()?;
-        }
+        self.presence_sensor_power_pin.set_high()?;
         Ok(())
     }
 
     fn disable_presence_sensor(&mut self) -> Result<()> {
-        if !self.presence_sensor_power_pin.is_set_low() {
-            self.presence_sensor_power_pin.set_low()?;
-        }
+        self.presence_sensor_power_pin.set_low()?;
         Ok(())
     }
 
@@ -309,6 +305,7 @@ fn main() -> Result<()> {
     loop {
         log_status(&state, &devices, &mut last_log_time);
         FreeRtos::delay_ms(state.duty_step_delay_ms());
+        
         devices.read_sensors(&mut state)?;
         state.calc_dimm_progress();
         devices.apply_led_power_level(&mut state)?;

@@ -13,26 +13,30 @@ Status:
 
 ## Sketch
 ![Sketch](./hardware/light_bar_sketch.png)
-_TODO replace with final photo_
+_TODO replace with final photo / Gif_
 
 ## Hardware
+
+### Pictures
+
+![ESP32H2](./media/esp32h2.png)
+![Complete board](./media/complete_board.png)
 
 ### Wiring diagram
 
 ![Wiring](./hardware/wiring_diagram_bright.svg)
 
 The wiring diagram includes a separate flash adapter (on the left side), which is can be connected to the main unit via a 4-pin connector. It's required to flash the ESP32-H2 once it's soldered.
-The programming board connects to a computer or any other suitable programming environment via a standard USB-C connector. 
+The programming board connects to a computer or any other suitable programming environment via a standard USB-C connector.
 Please note:
-  - This programming board is not strictly required in a scenario, when one has its own way of initial flashing the SoC before soldering and don't wish to update the firmware later
-  - While flashing / monitoring the chip via the flash adapter, we still need power supply through the 12V socket
+- This programming board is not strictly required in a scenario, when one has its own way of initial flashing the SoC before soldering and don't wish to update the firmware later
+- While flashing / monitoring the chip via the flash adapter, we still need power supply through the 12V socket
 
 ### [Parts]((./hardware/parts.md))
 
 ### References
 
 - [Switching with transistors](https://dl6gl.de/schalten-mit-transistoren.html)
-
 
 ## Software
 
