@@ -26,7 +26,7 @@ mod peripheral;
 pub const LED_POWER_STAGES: u32 = 1000;
 
 /// Percentage of hardware maximum LED brightness we want to reach
-pub const LED_MAX_POWER_LEVEL_PERCENT: f32 = 0.5; 
+pub const LED_MAX_POWER_LEVEL_PERCENT: f32 = 0.45; 
 
 /// max. reaction delay when LED Power Phase is in Off or ON state
 const ON_OFF_REACTION_STEP_DELAY_MS: u32 = 500;
@@ -34,7 +34,7 @@ const ON_OFF_REACTION_STEP_DELAY_MS: u32 = 500;
 // step-delay (and also max. reaction time) when LED Power Phase is in PowerDown or PowerUp state
 const LED_DIMM_DOWN_STEP_DELAY_MS: u32 = 10;
 
-const LED_DIMM_UP_STEP_DELAY_MS: u32 = 6;
+const LED_DIMM_UP_STEP_DELAY_MS: u32 = 7;
 
 const LUX_BUFFER_SIZE: usize = 10;
 const LUX_THRESHOLD: u32 = 12;
@@ -148,6 +148,9 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
         ambient_light_sensor: Veml7700<I2cDriver<'static>>,
         led_driver: LedcDriver<'static>,
     ) -> Self {
+        
+        log::info!("Presence sensor GND switch OUT on GPIO {}", presence_sensor_power_pin.pin());
+        
         let led_power_curve_scale_factor = Self::calc_led_power_curve_scale_factor(led_driver.get_max_duty());
         log::info!("LED power curve scale factor: {}", led_power_curve_scale_factor);
         Self {
@@ -197,21 +200,23 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
     }
 
     pub fn steer_presence_sensor(&mut self, state: &mut State) -> Result<()> {
-        if state.phase != Phase::Off || state.is_dark_enough_for_operation() {
-            self.enable_presence_sensor()?;
-        } else {
+        if state.phase == Phase::Off && !state.is_dark_enough_for_operation() {
             self.disable_presence_sensor()?;
+        } else {
+            self.enable_presence_sensor()?;
         }
         Ok(())
     }
 
     fn enable_presence_sensor(&mut self) -> Result<()> {
-        self.presence_sensor_power_pin.set_high()?;
+        // because the transistor switching logic inverts our signal, we have to go on low in order to enable the sensor 
+        self.presence_sensor_power_pin.set_low()?;
         Ok(())
     }
 
     fn disable_presence_sensor(&mut self) -> Result<()> {
-        self.presence_sensor_power_pin.set_low()?;
+        // because the transistor switching logic inverts our signal, we have to go on high here to disable the sensor
+        self.presence_sensor_power_pin.set_high()?;
         Ok(())
     }
 
@@ -276,11 +281,8 @@ fn main() -> Result<()> {
 
     let peripherals = Peripherals::take().unwrap();
 
-    log::info!("Presence sensor IN on GPIO 1");
-    log::info!("Presence sensor GND switch OUT on GPIO 12");
-    log::info!("VEML7700 ambient light sensor I2C: [SDA: GPIO 4, SCL: GPIO 5]");
     log::info!("LED PWM OUT on GPIO 11");
-    log::info!("LED maximum power level set to {:.0}%", 100.0 * LED_MAX_POWER_LEVEL_PERCENT);
+    log::info!("VEML7700 ambient light sensor I2C: [SDA: GPIO 4, SCL: GPIO 5]");
 
     let mut devices = Devices::new(
         init_presence_sensor(peripherals.pins.gpio1)?,
@@ -296,7 +298,8 @@ fn main() -> Result<()> {
             peripherals.pins.gpio11,
         )?,
     );
-    
+
+    log::info!("LED maximum power level set to {:.0}%", 100.0 * LED_MAX_POWER_LEVEL_PERCENT);
     log::info!("Peripherals initialized");
     
     let mut state = State::new();

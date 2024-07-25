@@ -8,7 +8,7 @@ use esp_idf_hal::ledc::{LedcChannel, LedcDriver, LedcTimer, LedcTimerDriver, Res
 use esp_idf_hal::ledc::config::TimerConfig;
 use esp_idf_hal::peripheral::Peripheral;
 use esp_idf_hal::prelude::FromValueType;
-use veml7700::Veml7700;
+use veml7700::{PowerSavingMode, Veml7700};
 
 use crate::error::Error;
 
@@ -21,6 +21,7 @@ pub fn init_presence_sensor<P: InputPin + OutputPin>(
     gpio_pin: P
 ) -> Result<PresenceSensor<P>> {
 
+    log::info!("Presence sensor IN on GPIO {}", gpio_pin.pin());
     // radar presence sensor
     let mut pin_driver = PinDriver::input(gpio_pin)?;
     pin_driver.set_pull(Pull::UpDown)?;
@@ -42,6 +43,8 @@ pub fn init_veml7700<I2C: I2c>(
 
     // Initialize the VEML7700 with I2C
     let mut veml7700_device = Veml7700::new(i2c_driver);
+    // PSM mode two means a refresh time of 1.1..1.8 sec
+    veml7700_device.enable_power_saving(PowerSavingMode::Two).map_err(Error::from)?;
     veml7700_device.enable().map_err(Error::from)?;
     Ok(veml7700_device)
 }
@@ -61,9 +64,12 @@ where
     C: LedcChannel<SpeedMode=<T as LedcTimer>::SpeedMode>,
     T: LedcTimer + 'static,
 {
+    let freq = 5.kHz();
+    let resolution = Resolution::Bits12;
+
     let timer_config = TimerConfig::default()
-        .frequency(5.kHz().into())
-        .resolution(Resolution::Bits12);
+        .frequency(freq.into())
+        .resolution(resolution);
 
     let timer_driver = LedcTimerDriver::new(timer, &timer_config)?;
     let mut driver = LedcDriver::new(channel, timer_driver, pin)?;
