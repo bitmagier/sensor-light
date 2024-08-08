@@ -7,9 +7,8 @@ use anyhow::Result;
 use esp_idf_svc::hal::delay::FreeRtos;
 use esp_idf_svc::hal::prelude::Peripherals;
 
-use crate::devices::{Devices, State};
+use crate::peripheral::{Devices, State};
 
-mod devices;
 mod error;
 mod peripheral;
 
@@ -69,7 +68,7 @@ fn main() -> Result<()> {
     let mut last_log_time = Instant::now().sub(Duration::from_mins(1));
 
     loop {
-        devices::log_status(&state, &devices, &mut last_log_time);
+        peripheral::log_status(&state, &devices, &mut last_log_time);
         FreeRtos::delay_ms(state.duty_step_delay_ms());
 
         devices.read_sensors(&mut state)?;

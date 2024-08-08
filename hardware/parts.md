@@ -5,6 +5,7 @@
 - VEML7700 Ambient Light Sensor
 - HLK-LD2410 Radar presence sensor (2x)
 - BC337-40 TO92 NPN Transistor (2x)
+- BC327-40 TO92 PNP Transistor 
 - IRLB8721PbF N-Channel MOSFET (TO-220)
 - Resistor 1 kΩ
 - Resistor 10 kΩ (2x)
@@ -13,11 +14,12 @@
 - 5m LED Stripe
 - 12V DC Connector
 - 12V Power Supply
-- PCB
-- 5 Pin Connector Mini Socket
+- Wiring Board
+- 4 Pin Connector Mini Socket
 - Cables
 - 5m LED Housing
 
-## Flash Adapter
-- USB-C Plug Female 
+## USB Flash Adapter
+- USB-C Plug Female
 - 4 Pin Connector Plug + Cable
+- On/Off Switch

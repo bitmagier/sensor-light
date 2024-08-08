@@ -12,19 +12,19 @@ Status:
 - Hardware: beta; release-candidate
 
 ## Sketch
-![Sketch](./hardware/light_bar_sketch.png)
-_TODO replace with final photo / Gif_
+
+[//]: # (<img src="./media/sensor_light.png" alt="drawing" width="400"/>)
 
 ## Hardware
 
 ### Pictures
 
-![ESP32H2](./media/esp32h2.png)
-![Complete board](./media/complete_board.png)
+[//]: # (<img src="./media/esp32h2.png" alt="drawing" width="400"/>)
+
+[//]: # (<img src="./media/soldered_board.png" alt="drawing" width="400"/>)
 
 ### Wiring diagram
-
-![Wiring](./hardware/wiring_diagram_bright.svg)
+<img src="./hardware/wiring_diagram_bright.svg" alt="drawing" width="800"/>
 
 The wiring diagram includes a separate flash adapter (on the left side), which is can be connected to the main unit via a 4-pin connector. It's required to flash the ESP32-H2 once it's soldered.
 The programming board connects to a computer or any other suitable programming environment via a standard USB-C connector.
@@ -63,4 +63,4 @@ In case you find it useful, the author would be delighted to notice a small dona
 
 Pull requests are welcome.
 
-_bitmagier, July 2024_
+_bitmagier, August 2024_
