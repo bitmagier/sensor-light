@@ -1,6 +1,7 @@
 use std::fmt::{Display, Formatter};
 use std::ops::Add;
 use std::time::Instant;
+
 use anyhow::Result;
 use esp_idf_hal::gpio;
 use esp_idf_hal::gpio::{Level, Pin, PinDriver};
