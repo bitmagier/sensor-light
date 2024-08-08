@@ -161,6 +161,7 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
             led_power_curve_scale_factor,
         }
     }
+
     pub fn read_sensors(&mut self, state: &mut State) -> Result<()> {
         if state.phase == Phase::Off {
             self.measure_ambient_light_level(state)?;
@@ -209,15 +210,17 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
     }
 
     fn enable_presence_sensor(&mut self) -> Result<()> {
-        // because the transistor switching logic inverts our signal, we have to go on low in order to enable the sensor 
-        self.presence_sensor_power_pin.set_low()?;
+        self.presence_sensor_power_pin.set_high()?;
         Ok(())
     }
 
     fn disable_presence_sensor(&mut self) -> Result<()> {
-        // because the transistor switching logic inverts our signal, we have to go on high here to disable the sensor
-        self.presence_sensor_power_pin.set_high()?;
+        self.presence_sensor_power_pin.set_low()?;
         Ok(())
+    }
+
+    pub fn presence_sensor_enabled(&self) -> bool {
+        self.presence_sensor_power_pin.is_set_high()
     }
 
     pub fn apply_led_power_level(&mut self, bar_state: &mut State) -> Result<()> {
@@ -262,7 +265,7 @@ fn log_status<P1: Pin, P2: Pin>(state: &State, devices: &Devices<P1, P2>, last_l
             state,
             devices.led_driver.get_duty(),
             devices.led_driver.get_max_duty(),
-            devices.presence_sensor_power_pin.is_set_high(),
+            devices.presence_sensor_enabled(),
             devices.presence_sensor.sensor_pin.get_level(),
             
         )
