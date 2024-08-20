@@ -129,7 +129,7 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
         ambient_light_sensor: Veml7700<I2cDriver<'static>>,
         led_driver: LedcDriver<'static>,
     ) -> Self {
-        log::info!("Presence sensor GND switch OUT on GPIO {}", presence_sensor_power_pin.pin());
+        log::info!("Presence sensor power switch OUT on GPIO {}", presence_sensor_power_pin.pin());
 
         let led_power_curve_scale_factor = Self::calc_led_power_curve_scale_factor(led_driver.get_max_duty());
         log::info!("LED power curve scale factor: {}", led_power_curve_scale_factor);

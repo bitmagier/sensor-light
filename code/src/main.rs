@@ -41,18 +41,18 @@ fn main() -> Result<()> {
 
     log::info!("Starting up");
 
-    let peripherals = Peripherals::take().unwrap();
+    let peripherals = Peripherals::take()?;
 
     log::info!("LED PWM OUT on GPIO 11");
-    log::info!("VEML7700 ambient light sensor I2C: [SDA: GPIO 4, SCL: GPIO 5]");
+    log::info!("VEML7700 ambient light sensor I2C: [SDA: GPIO 5, SCL: GPIO 4]");
 
     let mut devices = Devices::new(
         peripheral::init_presence_sensor(peripherals.pins.gpio1)?,
         peripheral::init_output_pin(peripherals.pins.gpio12)?,
         peripheral::init_veml7700(
             peripherals.i2c0,
-            peripherals.pins.gpio4,
             peripherals.pins.gpio5,
+            peripherals.pins.gpio4,
         )?,
         peripheral::init_led_driver(
             peripherals.ledc.channel0,
