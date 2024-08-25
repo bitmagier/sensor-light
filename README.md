@@ -13,20 +13,21 @@ Status:
 
 ## Sketch
 
-<img src="hardware/pictures/light_bar_sketch.png" alt="drawing" width="800"/>
+<picture>
+    <img src="hardware/pictures/light_bar_sketch.png" alt="Light bar sketch" width="600">
+</picture>
 
 ## Hardware
 
 ### Pictures
-<div>
+<a>
 <table style="border-style: none">
 <tr>
 <th><img src="./hardware/pictures/esp32h2.png" alt="drawing" width="300"/></th>
 <th><img src="./hardware/pictures/main_board_complete.png" alt="drawing" width="800"></th>
 </tr>
 </table>
-</div>
-
+</a>
 ### Wiring diagram
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset="hardware/wiring_diagram_dark.svg">
@@ -41,7 +42,7 @@ Please note:
 - While flashing / monitoring the chip via the flash adapter, we still need power supply through the 12V socket
 
 ### Parts 
-[List of parts]((./hardware/parts.md))
+[List of parts](./hardware/parts.md)
 
 ### References
 
