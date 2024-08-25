@@ -9,22 +9,30 @@ _It does not use Wifi or Zigbee features of the ESP32-H2 SoC and does not connec
 
 Status:
 - Software: ready, tested; release-candidate
-- Hardware: beta; release-candidate
+- Hardware: tested; release-candidate
 
 ## Sketch
 
-[//]: # (<img src="./media/sensor_light.png" alt="drawing" width="400"/>)
+<img src="hardware/pictures/light_bar_sketch.png" alt="drawing" width="800"/>
 
 ## Hardware
 
 ### Pictures
-
-[//]: # (<img src="./media/esp32h2.png" alt="drawing" width="400"/>)
-
-[//]: # (<img src="./media/soldered_board.png" alt="drawing" width="400"/>)
+<div>
+<table style="border-style: none">
+<tr>
+<th><img src="./hardware/pictures/esp32h2.png" alt="drawing" width="300"/></th>
+<th><img src="./hardware/pictures/main_board_complete.png" alt="drawing" width="800"></th>
+</tr>
+</table>
+</div>
 
 ### Wiring diagram
-<img src="./hardware/wiring_diagram_bright.svg" alt="drawing" width="800"/>
+<picture>
+    <source media="(prefers-color-scheme: dark)" srcset="hardware/wiring_diagram_dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="hardware/wiring_diagram_bright.svg">
+    <img alt="Wiring diagram" src="hardware/wiring_diagram_bright.svg">
+</picture>
 
 The wiring diagram includes a separate flash adapter (on the left side), which is can be connected to the main unit via a 4-pin connector. It's required to flash the ESP32-H2 once it's soldered.
 The programming board connects to a computer or any other suitable programming environment via a standard USB-C connector.
@@ -32,7 +40,8 @@ Please note:
 - This programming board is not strictly required in a scenario, when one has its own way of initial flashing the SoC before soldering and don't wish to update the firmware later
 - While flashing / monitoring the chip via the flash adapter, we still need power supply through the 12V socket
 
-### [Parts]((./hardware/parts.md))
+### Parts 
+[List of parts]((./hardware/parts.md))
 
 ### References
 
@@ -58,9 +67,11 @@ To flash the ESP:
 - `cargo run`
 
 ## Terms & Conditions
-Feel free to use anything here for learning, building your own version or make a product out of it and even sell it.
-In case you find it useful, the author would be delighted to notice a small donation in [Solana](https://solana.com/) to his wallet: `FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`.
+Feel free to use anything here for learning, building your own version or make a product out of it and sell it.
+Have fun!
 
 Pull requests are welcome.
+
+In case you find it useful, the author would be delighted to notice a small donation in [Solana](https://solana.com/) to his wallet: `FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`.
 
 _bitmagier, August 2024_
