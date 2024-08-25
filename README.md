@@ -31,8 +31,8 @@ Status:
 ### Wiring diagram
 <a>
     <source media="(prefers-color-scheme: dark)" srcset="hardware/wiring_diagram_dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="hardware/wiring_diagram_bright.svg">
-    <img alt="Wiring diagram" src="hardware/wiring_diagram_bright.svg">
+    <source media="(prefers-color-scheme: light)" srcset="hardware/wiring_diagram_light.svg">
+    <img alt="Wiring diagram" src="hardware/wiring_diagram_light.svg">
 </a>
 
 The wiring diagram includes a separate flash adapter (on the left side), which is can be connected to the main unit via a 4-pin connector. It's required to flash the ESP32-H2 once it's soldered.
@@ -90,10 +90,8 @@ For that and this project we need:
       - ignore sections for `[no_std]` 
       - When it comes to the step `espup install`, you should consider using `espup install --targets esp32h2` instead, to avoid installing lots of unnecessary dependencies for unused Espressif targets. 
 - `cargo build`
-
-Flashing the ESP via: `cargo run`
-
-Monitor chip terminal output: `espflash monitor`
+- Flashing the ESP via: `cargo run`
+- Monitor chip terminal output: `espflash monitor`
 
 
 ## Terms & Conditions
