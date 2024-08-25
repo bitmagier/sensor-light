@@ -13,27 +13,27 @@ Status:
 
 ## Sketch
 
-<picture>
+<a>
     <img src="hardware/pictures/light_bar_sketch.png" alt="Light bar sketch" width="600">
-</picture>
+</a>
 
 ## Hardware
 
-### Pictures
 <a>
-<table style="border-style: none">
-<tr>
-<th><img src="./hardware/pictures/esp32h2.png" alt="drawing" width="300"/></th>
-<th><img src="./hardware/pictures/main_board_complete.png" alt="drawing" width="800"></th>
-</tr>
-</table>
+    <table style="border-style: none">
+        <tr>
+            <th><img src="./hardware/pictures/esp32h2.png" alt="drawing" width="300"/></th>
+            <th><img src="./hardware/pictures/main_board_complete.png" alt="drawing" width="800"></th>
+        </tr>
+    </table>
 </a>
+
 ### Wiring diagram
-<picture>
+<a>
     <source media="(prefers-color-scheme: dark)" srcset="hardware/wiring_diagram_dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="hardware/wiring_diagram_bright.svg">
     <img alt="Wiring diagram" src="hardware/wiring_diagram_bright.svg">
-</picture>
+</a>
 
 The wiring diagram includes a separate flash adapter (on the left side), which is can be connected to the main unit via a 4-pin connector. It's required to flash the ESP32-H2 once it's soldered.
 The programming board connects to a computer or any other suitable programming environment via a standard USB-C connector.
@@ -42,30 +42,59 @@ Please note:
 - While flashing / monitoring the chip via the flash adapter, we still need power supply through the 12V socket
 
 ### Parts 
-[List of parts](./hardware/parts.md)
+
+#### LED Bar parts
+- ESP32-H2-WROOM-03  (the 2MB flash model is sufficient)
+- VEML7700 Ambient Light Sensor
+- HLK-LD2410 Radar presence sensor (2x)
+- BC337-40 TO92 NPN Transistor (2x)
+- BC327-40 TO92 PNP Transistor
+- IRLB8721PbF N-Channel MOSFET (TO-220)
+- Resistor 1 kΩ
+- Resistor 10 kΩ (2x)
+- Resistor 4.7 kΩ
+- Capacitor 0.1 µF (2x)
+- Capacitor 1.0 µF
+- 3.3V LDO voltage regulator LD1117V33 (SOT-223)
+- Diode (any, working at 3.3 V and 150mA max.)
+- 5m LED Stripe
+- 12V DC Connector
+- 12V Power Supply
+- Wiring Board
+- 4 Pin Connector Mini Socket
+- Cables
+- 5m LED Housing
+
+#### USB Flash Adapter
+- USB-C Plug Female
+- 4 Pin Connector Plug + Cable
+- On/Off Switch
 
 ### References
 
+- [Transistors](http://stefanfrings.de/transistoren/index.html)
 - [Switching with transistors](https://dl6gl.de/schalten-mit-transistoren.html)
 
 ## Software
 
-Complete program code is included here. In order to build it and flash the ESP32-H2 one needs a ESP32 Rust embedded toolchain.
+Complete program code is included here. In order to build it and flash the ESP32-H2 we need a ESP32 Rust embedded toolchain.
 
-We are going to use an ESP32-H2 SoC with Rust embedded Toolchain with `[std]`.
+We are going to use an ESP32-H2 SoC with Rust embedded Toolchain with `[std]` lib.
 For that and this project we need:
 
 - Rust compiler (see www.rust-lang.org) 
 - Rust embedded toolchain for ESP32-H2 for projects using __std__ lib
-    Follow the instructions for `[std]` projects in this book chapter:
-    [The Rust on ESP Book - Setting Up a Development Environment](https://esp-rs.github.io/book/installation/index.html)
-    Notes on this:
+    - Follow the instructions for `[std]` projects in this book chapter:
+        [The Rust on ESP Book - Setting Up a Development Environment](https://esp-rs.github.io/book/installation/index.html)
+    - Notes:
       - ignore sections for `[no_std]` 
       - When it comes to the step `espup install`, you should consider using `espup install --targets esp32h2` instead, to avoid installing lots of unnecessary dependencies for unused Espressif targets. 
 - `cargo build`
 
-To flash the ESP:
-- `cargo run`
+Flashing the ESP via: `cargo run`
+
+Monitor chip terminal output: `espflash monitor`
+
 
 ## Terms & Conditions
 Feel free to use anything here for learning, building your own version or make a product out of it and sell it.
