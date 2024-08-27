@@ -259,7 +259,7 @@ pub fn init_presence_sensor<P: InputPin + OutputPin>(
     log::info!("Presence sensor IN on GPIO {}", gpio_pin.pin());
     // radar presence sensor
     let mut pin_driver = PinDriver::input(gpio_pin)?;
-    pin_driver.set_pull(Pull::UpDown)?;
+    pin_driver.set_pull(Pull::Down)?;
 
     Ok(PresenceSensor {
         sensor_pin: pin_driver
