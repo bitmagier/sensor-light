@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2024-08-25T20:42:04.514Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.6.4 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="1eOFapcIbvahClR06pGO" version="24.6.4" type="device">
+<mxfile host="Electron" modified="2024-08-29T17:04:32.122Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.6.4 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="au6CIzHIoQqk-d83SjoS" version="24.6.4" type="device">
   <diagram name="Page-1" id="7e0a89b8-554c-2b80-1dc8-d5c74ca68de4">
     <mxGraphModel dx="1434" dy="835" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
       <root>
@@ -684,8 +684,8 @@
             <mxPoint x="762" y="782" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="4W4AlC_sW6kBnJiuT3F1-32" value="PWM&lt;br&gt;(inverted)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#FF9933;" parent="1" vertex="1" connectable="0">
-          <mxGeometry x="956.9995999997994" y="577.4599799790001" as="geometry" />
+        <mxCell id="4W4AlC_sW6kBnJiuT3F1-32" value="PWM signal (inverted)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#FF9933;" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="966.9995999997994" y="581.999979979" as="geometry" />
         </mxCell>
         <mxCell id="iJFj2JviCjap6J0s-o93-5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;endArrow=none;endFill=0;" parent="1" source="t9Yk8rtrzWxuMsd4z5qw-52" edge="1">
           <mxGeometry relative="1" as="geometry">
@@ -752,7 +752,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="MiJf-mNnC2e54M0besiX-1" value="Presence Sensor Power (12V switched)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="2iyte8KJNzoHr3Z_swD4-38">
+        <mxCell id="MiJf-mNnC2e54M0besiX-1" value="Presence sensor power (12V switched)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" parent="2iyte8KJNzoHr3Z_swD4-38" vertex="1" connectable="0">
           <mxGeometry x="-0.409" y="-2" relative="1" as="geometry">
             <mxPoint x="-48" y="-10" as="offset" />
           </mxGeometry>
@@ -791,7 +791,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="Gl8Fd9Fw2VBkpcaN648f-11" value="Presence Sensor Power switch" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;rotation=270;" parent="Gl8Fd9Fw2VBkpcaN648f-10" vertex="1" connectable="0">
+        <mxCell id="Gl8Fd9Fw2VBkpcaN648f-11" value="Presence Sensor Power switch" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Helvetica;fontSize=10;fontColor=default;labelBackgroundColor=default;rotation=270;" parent="Gl8Fd9Fw2VBkpcaN648f-10" vertex="1" connectable="0">
           <mxGeometry x="-0.0098" y="-1" relative="1" as="geometry">
             <mxPoint x="-8" y="54" as="offset" />
           </mxGeometry>
@@ -838,7 +838,7 @@
         <mxCell id="Gl8Fd9Fw2VBkpcaN648f-20" value="" style="shape=waypoint;sketch=0;fillStyle=solid;size=6;pointerEvents=1;points=[];fillColor=#1ba1e2;resizable=0;rotatable=0;perimeter=centerPerimeter;snapToPoint=1;fontColor=#ffffff;strokeColor=#006EAF;" parent="1" vertex="1">
           <mxGeometry x="1097" y="772" width="20" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="Y1uZ7bmz27FLlu9ukU51-5" value="Sensor Light&lt;br&gt;Wiring Diagram&lt;br&gt;v1.1.1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+        <mxCell id="Y1uZ7bmz27FLlu9ukU51-5" value="Sensor Light&lt;br&gt;Wiring Diagram&lt;br&gt;v1.1.2" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="28.99" y="782" width="91.01" height="40" as="geometry" />
         </mxCell>
         <mxCell id="q0wGzRVEdxRFVfAUd2rx-1" value="Diode" style="pointerEvents=1;fillColor=strokeColor;verticalLabelPosition=middle;shadow=0;dashed=0;align=right;html=1;verticalAlign=middle;shape=mxgraph.electrical.diodes.diode;direction=south;fontSize=10;labelPosition=left;" parent="1" vertex="1">

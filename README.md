@@ -3,18 +3,17 @@
 A smart light bar — illuminates dark places on-demand by gently powering-up/down a LED stripe depending on the ambient light level and a detected human presence.
 
 Hardware core is a ESP32-H2 SoC connected with an VEML7700 ambient light sensor and a small but effective LD2410 radar based presence sensor.
-This automatic floor light is completely self-contained.
+This automatic light is completely self-contained - just needs a 12V power supply.
 
 _It does not use Wifi or Zigbee features of the ESP32-H2 SoC and does not connect to a smart home system with that firmware here - but one may add such a feature smoothly, of course._
 
 Status:
-- Software: ready, tested
-- Hardware: ready, tested
+- Software: tested, ready
+- Hardware: tested, ready
 
-## Sketch
 
 <a>
-    <img src="hardware/pictures/light_bar_sketch.png" alt="Light bar sketch" width="600">
+    <img src="hardware/pictures/light_bar_final.png" alt="Light bar sketch" width="800">
 </a>
 
 ## Hardware
@@ -70,11 +69,6 @@ Please note:
 - 4 Pin Connector Plug + Cable
 - On/Off Switch
 
-### References
-
-- [Transistors](http://stefanfrings.de/transistoren/index.html)
-- [Switching with transistors](https://dl6gl.de/schalten-mit-transistoren.html)
-
 ## Software
 
 Complete program code is included here. In order to build it and flash the ESP32-H2 we need a ESP32 Rust embedded toolchain.
@@ -94,12 +88,22 @@ For that and this project we need:
 - Monitor chip terminal output: `espflash monitor`
 
 
+## References
+
+- [Transistors](http://stefanfrings.de/transistoren/index.html)
+- [Switching with transistors](https://dl6gl.de/schalten-mit-transistoren.html)
+- [The Rust on ESP Book - Setting Up a Development Environment](https://esp-rs.github.io/book/installation/index.html)
+
+
 ## Terms & Conditions
 Feel free to use anything here for learning, building your own version or make a product out of it and sell it.
 Have fun!
 
-Pull requests are welcome.
-
-In case you find it useful, the author would be delighted to notice a small donation in [Solana](https://solana.com/) to his wallet: `FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`.
+Bug reports & pull requests are welcome.
 
 _bitmagier, August 2024_
+
+
+_In case you find it useful, I would be delighted to notice a small donation to my Solana wallet: `FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`_
+
+![QR Code](./hardware/pictures/solana_wallet.png).
