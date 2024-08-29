@@ -1,4 +1,4 @@
-//! Peripheral initialization
+//! Peripheral initialization & control
 
 use std::fmt::{Display, Formatter};
 use std::ops::Add;

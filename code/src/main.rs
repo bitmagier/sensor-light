@@ -22,12 +22,12 @@ pub const LED_MAX_POWER_LEVEL_PERCENT: f32 = 0.45;
 pub const ON_OFF_REACTION_STEP_DELAY_MS: u32 = 500;
 
 // step-delay (and also max. reaction time) when LED Power Phase is in PowerDown or PowerUp state
-pub const LED_DIMM_DOWN_STEP_DELAY_MS: u32 = 10;
+pub const LED_DIMM_DOWN_STEP_DELAY_MS: u32 = 8;
 
-pub const LED_DIMM_UP_STEP_DELAY_MS: u32 = 7;
+pub const LED_DIMM_UP_STEP_DELAY_MS: u32 = 6;
 
 pub const LUX_BUFFER_SIZE: usize = 10;
-pub const LUX_THRESHOLD: u32 = 12;
+pub const LUX_THRESHOLD: u32 = 10;
 
 const STATUS_LOG_INTERVAL: Duration = Duration::from_secs(2);
 

@@ -1,6 +1,6 @@
 [package]
 name = "sensor-light"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["bitmagier <bitmagier@mailbox.org>"]
 edition = "2021"
 resolver = "2"
