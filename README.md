@@ -1,19 +1,18 @@
 # Sensor Light
 
-A smart light bar — illuminates dark places on-demand by gently powering-up/down a LED stripe depending on the ambient light level and a detected human presence.
+A smart light bar — illuminates dark places on-demand by gently dimming up/down a LED stripe depending on the ambient light level and a detected human presence.
 
-Hardware core is a ESP32-H2 SoC connected with an VEML7700 ambient light sensor and a small but effective LD2410 radar based presence sensor.
-This automatic light is completely self-contained - just needs a 12V power supply.
+This automatic light is completely self-contained – just needs 12V power supply.
 
-_It does not use Wifi or Zigbee features of the ESP32-H2 SoC and does not connect to a smart home system with that firmware here - but one may add such a feature smoothly, of course._
+An advanced but quite cheap presence sensor is used here, which works to my satisfaction. The circuit and software is designed to save power where possible. 
+A ESP32-H2 SoC low power processor serves for the logic. It is connected to a VEML7700 ambient light sensor and the mentioned small but effective LD2410 radar based presence sensor.
 
-Status:
-- Software: tested, ready
-- Hardware: tested, ready
+It does NOT need nor use any Wifi / Zigbee / Matter features of the ESP32-H2 SoC. One may feel free to add a Smart Home connector on his own.
 
+_Status: Hardware and Software is feature complete, tested and ready to Roll 'n' Roll._
 
 <a>
-    <img src="hardware/pictures/light_bar_final.png" alt="Light bar sketch" width="800">
+    <img src="hardware/pictures/light_bar_final.png" alt="Light bar sketch" width="600">
 </a>
 
 ## Hardware
@@ -22,7 +21,7 @@ Status:
     <table style="border-style: none">
         <tr>
             <th><img src="./hardware/pictures/esp32h2.png" alt="drawing" width="300"/></th>
-            <th><img src="./hardware/pictures/main_board_complete.png" alt="drawing" width="800"></th>
+            <th><img src="./hardware/pictures/main_board_complete.png" alt="drawing" width="600"></th>
         </tr>
     </table>
 </a>
@@ -71,10 +70,10 @@ Please note:
 
 ## Software
 
-Complete program code is included here. In order to build it and flash the ESP32-H2 we need a ESP32 Rust embedded toolchain.
+Complete program code is included. 
 
-We are going to use an ESP32-H2 SoC with Rust embedded Toolchain with `[std]` lib.
-For that and this project we need:
+We are going to use an ESP32-H2 SoC with Rust embedded Toolchain with the `[std]` lib.
+Here is an overview of what's needed to build and run the software:
 
 - Rust compiler (see www.rust-lang.org) 
 - Rust embedded toolchain for ESP32-H2 for projects using __std__ lib
@@ -84,9 +83,8 @@ For that and this project we need:
       - ignore sections for `[no_std]` 
       - When it comes to the step `espup install`, you should consider using `espup install --targets esp32h2` instead, to avoid installing lots of unnecessary dependencies for unused Espressif targets. 
 - `cargo build`
-- Flashing the ESP via: `cargo run`
-- Monitor chip terminal output: `espflash monitor`
-
+- `cargo run`  _(to flash the chip)_
+- `espflash monitor` _(to monitor ESP32 console output) 
 
 ## References
 
@@ -99,11 +97,10 @@ For that and this project we need:
 Feel free to use anything here for learning, building your own version or make a product out of it and sell it.
 Have fun!
 
-Bug reports & pull requests are welcome.
+Pull requests are welcome.
 
-_bitmagier, August 2024_
+_bitmagier, September 2024_
 
+---
 
-_In case you find it useful, I would be delighted to notice a small donation to my Solana wallet: `FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`_
-
-![QR Code](./hardware/pictures/solana_wallet.png).
+_In case you find this work useful and like to support me, I would be delighted to notice a donation in [Solana](https://solana.com/) to: [`FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`](./hardware/pictures/solana_wallet.png)_
