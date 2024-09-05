@@ -34,7 +34,7 @@ pub enum Phase {
 #[derive(Debug)]
 pub struct State {
     // ambient light level history buffer (last 10 values)
-    ambient_light_sensor_lux_buffer: AllocRingBuffer<u32>,
+    ambient_light_sensor_lux_buffer: AllocRingBuffer<f32>,
     pub phase: Phase,
     /// range: 0..LED_POWER_STAGES
     pub led_power_stage: u32,
@@ -51,12 +51,12 @@ impl State {
         }
     }
 
-    pub fn lux_level(&self) -> Option<u32> {
+    pub fn lux_level(&self) -> Option<f32> {
         if self.ambient_light_sensor_lux_buffer.is_empty() {
             None
         } else {
             let sorted = self.ambient_light_sensor_lux_buffer.iter()
-                .sorted()
+                .sorted_by(|a,b | a.partial_cmp(b).unwrap())
                 .collect_vec();
             Some(
                 *sorted[sorted.len() / 2]
@@ -152,8 +152,8 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
 
     // measure ambient light level - makes only sense to be called if LED is Off
     fn measure_ambient_light_level(&mut self, state: &mut State) -> Result<()> {
-        let lux: u32 = self.ambient_light_sensor.read_lux()
-            .map_err(Error::from)?.round() as u32;
+        let lux: f32 = self.ambient_light_sensor.read_lux()
+            .map_err(Error::from)?;
         state.ambient_light_sensor_lux_buffer.push(lux);
         Ok(())
     }
@@ -278,7 +278,7 @@ pub fn init_veml7700<I2C: I2c>(
 
     // Initialize the VEML7700 with I2C
     let mut veml7700_device = Veml7700::new(i2c_driver);
-    // PSM mode two means a refresh time of 1.1..1.8 sec
+    // PSM mode two (in combination with defaults for other settings) means a refresh time of 1.1 sec
     veml7700_device.enable_power_saving(PowerSavingMode::Two).map_err(Error::from)?;
     veml7700_device.enable().map_err(Error::from)?;
     Ok(veml7700_device)
@@ -299,7 +299,7 @@ where
     C: LedcChannel<SpeedMode=<T as LedcTimer>::SpeedMode>,
     T: LedcTimer + 'static,
 {
-    let freq = 5.kHz();
+    let freq = 250.Hz();
     let resolution = Resolution::Bits12;
 
     let timer_config = TimerConfig::default()
