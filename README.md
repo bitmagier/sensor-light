@@ -5,7 +5,7 @@ A smart light bar — illuminates dark places on-demand by gently dimming up/dow
 This automatic light is completely self-contained – just needs 12V power supply.
 
 An advanced but quite cheap presence sensor is used here, which works to my satisfaction. The circuit and software is designed to save power where possible. 
-A ESP32-H2 SoC low power processor serves for the logic. It is connected to a VEML7700 ambient light sensor and the mentioned small but effective LD2410 radar based presence sensor.
+An ESP32-H2 SoC low power processor serves for the logic. It is connected to a VEML7700 ambient light sensor and the mentioned small but effective LD2410 radar based presence sensor.
 
 It does NOT need nor use any Wifi / Zigbee / Matter features of the ESP32-H2 SoC. One may feel free to add a Smart Home connector on his own.
 
@@ -70,7 +70,7 @@ Please note:
 
 ## Software
 
-Complete program code is included. 
+Complete program code is included under `/code` 
 
 We are going to use an ESP32-H2 SoC with Rust embedded Toolchain with the `[std]` lib.
 Here is an overview of what's needed to build and run the software:
@@ -81,10 +81,12 @@ Here is an overview of what's needed to build and run the software:
         [The Rust on ESP Book - Setting Up a Development Environment](https://esp-rs.github.io/book/installation/index.html)
     - Notes:
       - ignore sections for `[no_std]` 
-      - When it comes to the step `espup install`, you should consider using `espup install --targets esp32h2` instead, to avoid installing lots of unnecessary dependencies for unused Espressif targets. 
+      - When it comes to the step `espup install`, you should consider using `espup install --targets esp32h2` instead, to avoid installing lots of unnecessary dependencies for unused Espressif targets.
 - `cargo build`
-- `cargo run`  _(to flash the chip)_
-- `espflash monitor` _(to monitor ESP32 console output) 
+ 
+After connecting the ESP32-H2 via a flash adapter to an USB computer port: 
+- `cargo run --release`  _(flashes the chip)_
+- `espflash monitor` _(optional – see ESP32 console output)_ 
 
 ## References
 
