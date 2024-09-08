@@ -278,8 +278,8 @@ pub fn init_veml7700<I2C: I2c>(
 
     // Initialize the VEML7700 with I2C
     let mut veml7700_device = Veml7700::new(i2c_driver);
-    // PSM mode two (in combination with defaults for other settings) means a refresh time of 1.1 sec
-    veml7700_device.enable_power_saving(PowerSavingMode::Two).map_err(Error::from)?;
+    // PSM mode Three (in combination with defaults for other settings) means a refresh time of 2.1 sec
+    veml7700_device.enable_power_saving(PowerSavingMode::Three).map_err(Error::from)?;
     veml7700_device.enable().map_err(Error::from)?;
     Ok(veml7700_device)
 }
@@ -299,7 +299,7 @@ where
     C: LedcChannel<SpeedMode=<T as LedcTimer>::SpeedMode>,
     T: LedcTimer + 'static,
 {
-    let freq = 250.Hz();
+    let freq = 120.Hz();
     let resolution = Resolution::Bits12;
 
     let timer_config = TimerConfig::default()

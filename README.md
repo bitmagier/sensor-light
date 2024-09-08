@@ -84,7 +84,7 @@ Here is an overview of what's needed to build and run the software:
       - When it comes to the step `espup install`, you should consider using `espup install --targets esp32h2` instead, to avoid installing lots of unnecessary dependencies for unused Espressif targets.
 - `cargo build`
  
-After connecting the ESP32-H2 via a flash adapter to an USB computer port: 
+After connecting the ESP32-H2 via a flash adapter to a USB computer port: 
 - `cargo run --release`  _(flashes the chip)_
 - `espflash monitor` _(optional – see ESP32 console output)_ 
 
