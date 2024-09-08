@@ -16,18 +16,18 @@ mod peripheral;
 pub const LED_POWER_STAGES: u32 = 1000;
 
 /// Percentage of hardware maximum LED brightness we want to reach
-pub const LED_MAX_POWER_LEVEL_PERCENT: f32 = 0.15;
+pub const LED_MAX_POWER_LEVEL_PERCENT: f32 = 0.10;
 
 /// max. reaction delay when LED Power Phase is in Off or ON state
 pub const ON_OFF_REACTION_STEP_DELAY_MS: u32 = 500;
 
 // step-delay (and also max. reaction time) when LED Power Phase is in PowerDown or PowerUp state
-pub const LED_DIMM_DOWN_STEP_DELAY_MS: u32 = 15;
+pub const LED_DIM_DOWN_STEP_DELAY_MS: u32 = 15;
 
-pub const LED_DIMM_UP_STEP_DELAY_MS: u32 = 6;
+pub const LED_DIM_UP_STEP_DELAY_MS: u32 = 6;
 
 pub const LUX_BUFFER_SIZE: usize = 10;
-pub const LUX_THRESHOLD: f32 = 0.30;
+pub const LUX_THRESHOLD: f32 = 0.10;
 
 const STATUS_LOG_INTERVAL: Duration = Duration::from_secs(2);
 
@@ -72,7 +72,7 @@ fn main() -> Result<()> {
         FreeRtos::delay_ms(state.duty_step_delay_ms());
 
         devices.read_sensors(&mut state)?;
-        state.calc_dimm_progress();
+        state.calc_dim_progress();
         devices.apply_led_power_level(&mut state)?;
         devices.steer_presence_sensor(&mut state)?;
     }

@@ -16,7 +16,7 @@ use itertools::Itertools;
 use ringbuffer::{AllocRingBuffer, RingBuffer};
 use veml7700::{PowerSavingMode, Veml7700};
 
-use crate::{LED_DIMM_DOWN_STEP_DELAY_MS, LED_DIMM_UP_STEP_DELAY_MS, LED_MAX_POWER_LEVEL_PERCENT, LED_POWER_STAGES, LUX_BUFFER_SIZE, LUX_THRESHOLD, ON_OFF_REACTION_STEP_DELAY_MS, STATUS_LOG_INTERVAL};
+use crate::{LED_DIM_DOWN_STEP_DELAY_MS, LED_DIM_UP_STEP_DELAY_MS, LED_MAX_POWER_LEVEL_PERCENT, LED_POWER_STAGES, LUX_BUFFER_SIZE, LUX_THRESHOLD, ON_OFF_REACTION_STEP_DELAY_MS, STATUS_LOG_INTERVAL};
 use crate::error::Error;
 
 pub struct PresenceSensor<P1: Pin> {
@@ -74,12 +74,12 @@ impl State {
     pub fn duty_step_delay_ms(&self) -> u32 {
         match self.phase {
             Phase::Off | Phase::On => ON_OFF_REACTION_STEP_DELAY_MS,
-            Phase::PowerDown => LED_DIMM_DOWN_STEP_DELAY_MS,
-            Phase::PowerUp => LED_DIMM_UP_STEP_DELAY_MS
+            Phase::PowerDown => LED_DIM_DOWN_STEP_DELAY_MS,
+            Phase::PowerUp => LED_DIM_UP_STEP_DELAY_MS
         }
     }
 
-    pub fn calc_dimm_progress(&mut self) {
+    pub fn calc_dim_progress(&mut self) {
         match self.phase {
             Phase::Off => debug_assert_eq!(self.led_power_stage, 0),
             Phase::PowerDown => {
@@ -299,7 +299,7 @@ where
     C: LedcChannel<SpeedMode=<T as LedcTimer>::SpeedMode>,
     T: LedcTimer + 'static,
 {
-    let freq = 500.Hz();
+    let freq = 4321.Hz();
     let resolution = Resolution::Bits12;
 
     let timer_config = TimerConfig::default()
