@@ -299,7 +299,7 @@ where
     C: LedcChannel<SpeedMode=<T as LedcTimer>::SpeedMode>,
     T: LedcTimer + 'static,
 {
-    let freq = 120.Hz();
+    let freq = 500.Hz();
     let resolution = Resolution::Bits12;
 
     let timer_config = TimerConfig::default()
