@@ -6,7 +6,7 @@ use std::time::Instant;
 
 use anyhow::Result;
 use esp_idf_hal::gpio;
-use esp_idf_hal::gpio::{InputPin, Level, Output, OutputPin, Pin, PinDriver, Pull};
+use esp_idf_hal::gpio::{InputPin, Level, OutputPin, Pin, PinDriver, Pull};
 use esp_idf_hal::i2c::{I2c, I2cConfig, I2cDriver};
 use esp_idf_hal::ledc::{LedcChannel, LedcDriver, LedcTimer, LedcTimerDriver, Resolution};
 use esp_idf_hal::ledc::config::TimerConfig;
@@ -39,6 +39,7 @@ pub struct State {
     /// range: 0..LED_POWER_STAGES
     pub led_power_stage: u32,
     pub duty: u32,
+    pub light_always_on: bool
 }
 
 impl State {
@@ -48,6 +49,7 @@ impl State {
             phase: Phase::Off,
             led_power_stage: 0,
             duty: 0,
+            light_always_on: false
         }
     }
 
@@ -114,20 +116,22 @@ impl Display for State {
     }
 }
 
-pub struct Devices<P1: Pin, P2: Pin> {
+pub struct Devices<P1: Pin, P2: Pin, P3: Pin> {
     presence_sensor: PresenceSensor<P1>,
     presence_sensor_power_pin: PinDriver<'static, P2, gpio::Output>,
     ambient_light_sensor: Veml7700<I2cDriver<'static>>,
     led_driver: LedcDriver<'static>,
     led_power_curve_scale_factor: f32,
+    light_always_on_switch_pin: PinDriver<'static, P3, gpio::Input>
 }
 
-impl<P1: Pin, P2: Pin> Devices<P1, P2> {
+impl<P1: Pin, P2: Pin, P3: Pin> Devices<P1, P2, P3> {
     pub fn new(
         presence_sensor: PresenceSensor<P1>,
         presence_sensor_power_pin: PinDriver<'static, P2, gpio::Output>,
         ambient_light_sensor: Veml7700<I2cDriver<'static>>,
         led_driver: LedcDriver<'static>,
+        light_always_on_switch_pin: PinDriver<'static, P3, gpio::Input>
     ) -> Self {
         log::info!("Presence sensor power switch OUT on GPIO {}", presence_sensor_power_pin.pin());
 
@@ -139,14 +143,23 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
             ambient_light_sensor,
             led_driver,
             led_power_curve_scale_factor,
+            light_always_on_switch_pin
         }
     }
 
     pub fn read_sensors(&mut self, state: &mut State) -> Result<()> {
+        state.light_always_on = self.light_always_on_switch_pin.is_high();
+
         if state.phase == Phase::Off {
             self.measure_ambient_light_level(state)?;
         }
-        self.read_presence_sensor_and_apply_phase(state);
+
+        if state.light_always_on {
+            state.phase = Phase::On
+        } else {
+            self.read_presence_sensor_and_apply_phase(state);
+        }
+
         Ok(())
     }
 
@@ -181,10 +194,14 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
     }
 
     pub fn steer_presence_sensor(&mut self, state: &mut State) -> Result<()> {
-        if state.phase == Phase::Off && !state.is_dark_enough_for_operation() {
-            self.disable_presence_sensor()?;
-        } else {
-            self.enable_presence_sensor()?;
+        match (
+            state.light_always_on,
+            state.phase,
+            state.is_dark_enough_for_operation())
+        {
+            (true, _, _) |
+            (false, Phase::Off, false) => self.disable_presence_sensor()?,
+            _ => self.enable_presence_sensor()?
         }
         Ok(())
     }
@@ -237,17 +254,20 @@ impl<P1: Pin, P2: Pin> Devices<P1, P2> {
     }
 }
 
-pub fn log_status<P1: Pin, P2: Pin>(state: &State, devices: &Devices<P1, P2>, last_log_time: &mut Instant) {
+pub fn log_status<P1: Pin, P2: Pin, P3: Pin>(state: &State, devices: &Devices<P1, P2, P3>, last_log_time: &mut Instant) {
     let now = Instant::now();
     if last_log_time.add(STATUS_LOG_INTERVAL) <= now {
         *last_log_time = now;
-        log::info!("{} | Hardware: Chip PWM duty: {}/{}, Presence sensor: (enabled: {}, signal: {:?})",
+        log::info!("{} | Hardware: Chip PWM duty: {}/{}, Presence sensor: (enabled: {}, signal: {:?}), Always-on-mode: {:?}",
             state,
             devices.led_driver.get_duty(),
             devices.led_driver.get_max_duty(),
             devices.presence_sensor_enabled(),
             devices.presence_sensor.sensor_pin.get_level(),
-
+            match devices.light_always_on_switch_pin.get_level() {
+                Level::Low => "No",
+                Level::High => "Yes"
+            }
         )
     }
 }
@@ -284,9 +304,15 @@ pub fn init_veml7700<I2C: I2c>(
     Ok(veml7700_device)
 }
 
-pub fn init_output_pin<P: OutputPin>(pin: P) -> Result<PinDriver<'static, P, Output>> {
+pub fn init_output_pin<P: OutputPin>(pin: P) -> Result<PinDriver<'static, P, gpio::Output>> {
     let mut pin_driver = PinDriver::output(pin)?;
     pin_driver.set_low()?;
+    Ok(pin_driver)
+}
+
+pub fn init_input_pin<P: InputPin + OutputPin>(pin: P) -> Result<PinDriver<'static, P, gpio::Input>> {
+    let mut pin_driver = PinDriver::input(pin)?;
+    pin_driver.set_pull(Pull::Down)?;
     Ok(pin_driver)
 }
 
