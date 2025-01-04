@@ -15,29 +15,22 @@ harness = false
 opt-level = "s"
 
 [profile.dev]
-debug = true    # Symbols are nice and they don't increase the size on Flash
+debug = true
 opt-level = "z"
 
 [features]
-default = ["std", "embassy", "esp-idf-svc/native"]
-
-pio = ["esp-idf-svc/pio"]
-std = ["alloc", "esp-idf-svc/binstart", "esp-idf-svc/std"]
-alloc = ["esp-idf-svc/alloc"]
-nightly = ["esp-idf-svc/nightly"]
+default = []
 experimental = ["esp-idf-svc/experimental"]
-embassy = ["esp-idf-svc/embassy-sync", "esp-idf-svc/critical-section", "esp-idf-svc/embassy-time-driver"]
 
 [dependencies]
 log = "0.4"
 anyhow = "1.0"
-itertools = "0.13"
+itertools = "0.14"
 ringbuffer = "0.15"
-# We need the recent `master` branch from esp-idf-hal to adress GPIO pins above 20. This version of esp-idf-svc links to esp-idf-hal on github (instead of crates.io).
-esp-idf-svc = { git = "https://github.com/bitmagier/esp-idf-svc", branch="links-to-esp-idf-hal-master", features = ["critical-section", "embassy-time-driver", "embassy-sync"] }
-esp-idf-hal = { git = "https://github.com/esp-rs/esp-idf-hal" }
+esp-idf-svc = { version = "0.50.0", features = ["critical-section", "embassy-time-driver", "embassy-sync"] }
+esp-idf-hal = { version = "0.45.0"}
 veml7700 = "0.2"
 
 [build-dependencies]
-embuild = "0.32.0"
-cc = "=1.1.30" # ESP-IDF workaround: Version "1.1.30" necessary until a new version of `esp-idf-sys` is released
+embuild = "0.33"
+
