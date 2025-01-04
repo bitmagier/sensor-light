@@ -13,7 +13,7 @@ It does NOT need nor use any Wifi / Zigbee / Matter features of the ESP32-H2 SoC
 
 __Status: Hardware and Software is feature complete, tested and ready to Roll 'n' Roll.__
 
----
+
 ## Prototype pictures
 
 <a>
@@ -28,7 +28,8 @@ __Status: Hardware and Software is feature complete, tested and ready to Roll 'n
         </tr>
     </table>
 </a>
----
+
+
 ## Hardware
 ### Wiring diagram
 <a>
