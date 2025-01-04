@@ -14,6 +14,21 @@ It does NOT need nor use any Wifi / Zigbee / Matter features of the ESP32-H2 SoC
 __Status: Hardware and Software is feature complete, tested and ready to Roll 'n' Roll.__
 
 ---
+## Prototype pictures
+
+<a>
+    <img src="hardware/pictures/light_bar_final.png" alt="Light bar sketch" width="600">
+</a>
+
+<a>
+    <table style="border-style: none">
+        <tr>
+            <th><img src="./hardware/pictures/esp32h2.png" alt="drawing" width="300"/></th>
+            <th><img src="./hardware/pictures/main_board_complete.png" alt="drawing" width="600"></th>
+        </tr>
+    </table>
+</a>
+---
 ## Hardware
 ### Wiring diagram
 <a>
@@ -46,10 +61,11 @@ _Designed for 12V and (up to) 35W LED Stripe._
 - Capacitor 0.1µF (2x)
 - Capacitor 10µF
 - 3.3V LDO voltage regulator LD1117V33 (SOT-223)
+- Micro slide switch
 - Diode (any, working at 3.3 V and 150mA max.)
 - 5m LED Stripe (12V, 3000-3200k, COB, 8mm wide, power: 5-7 W/m)
 - 12V DC Connector
-- 12V, 5A Power Supply _(look for a good one to avoid flickering)_
+- 12V 5A Power Supply _(look for a good one to avoid flickering and lower power consumption)_
 - Wiring Board
 - 4 Pin Connector Mini Socket
 - Cables
@@ -80,30 +96,14 @@ After connecting the ESP32-H2 via a flash adapter to a USB computer port:
 - `cargo run --release`  _(flashes the chip)_
 - `espflash monitor` _(optional – see ESP32 console output)_ 
 
-## Prototype pictures
-
-<a>
-    <img src="hardware/pictures/light_bar_final.png" alt="Light bar sketch" width="600">
-</a>
-
-<a>
-    <table style="border-style: none">
-        <tr>
-            <th><img src="./hardware/pictures/esp32h2.png" alt="drawing" width="300"/></th>
-            <th><img src="./hardware/pictures/main_board_complete.png" alt="drawing" width="600"></th>
-        </tr>
-    </table>
-</a>
 
 ## Terms & Conditions
+Pull requests are welcome.
 
 Feel free to use anything here for learning, building your own version or make a product out of it and sell it.  
 Have fun!
 
-Pull requests are welcome.
-
-_bitmagier, September 2024_
+_In case you find this work useful and like to support the author, a donation in [Solana](https://solana.com/) to: [`FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`](./hardware/pictures/solana_wallet.png)_ would be appreciated.
 
 ---
-
-_In case you find this work useful and like to support me, I would appreciate a donation in [Solana](https://solana.com/) to: [`FTMfeKYhpVAouuwXjpJXhnT13fkeNJqQsRGMBxBo1GML`](./hardware/pictures/solana_wallet.png)_
+_bitmagier_

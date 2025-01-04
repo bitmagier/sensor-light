@@ -45,6 +45,7 @@ fn main() -> Result<()> {
 
     log::info!("LED PWM OUT on GPIO 11");
     log::info!("VEML7700 ambient light sensor I2C: [SDA: GPIO 5, SCL: GPIO 4]");
+    log::info!("Always-on switch (input) on GPIO 22");
 
     let mut devices = Devices::new(
         peripheral::init_presence_sensor(peripherals.pins.gpio1)?,
@@ -59,6 +60,7 @@ fn main() -> Result<()> {
             peripherals.ledc.timer0,
             peripherals.pins.gpio11,
         )?,
+        peripheral::init_input_pin(peripherals.pins.gpio22)?
     );
 
     log::info!("LED maximum power level set to {:.0}%", 100.0 * LED_MAX_POWER_LEVEL_PERCENT);
