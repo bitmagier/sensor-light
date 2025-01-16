@@ -9,7 +9,7 @@ An advanced (and quite cheap) presence sensor is used here, which works to my sa
 The circuit and software is designed to save power where possible.  
 An ESP32-H2 SoC low power processor serves for the logic. It is connected to a VEML7700 ambient light sensor and the mentioned small but effective LD2410 radar based presence sensor.
 
-It does NOT need nor use any Wifi / Zigbee / Matter features of the ESP32-H2 SoC. One may feel free to add some sort of Smart Home connector on his own.
+It does NOT need nor use any Wifi / Zigbee / Matter features of the ESP32-H2 SoC. One may feel free to add that or some sort of Smart Home connector on his own.
 
 __Status: Hardware and Software is feature complete, tested and ready to Roll 'n' Roll.__
 
@@ -17,16 +17,18 @@ __Status: Hardware and Software is feature complete, tested and ready to Roll 'n
 ## Prototype pictures
 
 <a>
-    <img src="hardware/pictures/light_bar_final.png" alt="Light bar sketch" width="600">
-</a>
-
-<a>
     <table style="border-style: none">
         <tr>
-            <th><img src="./hardware/pictures/esp32h2.png" alt="drawing" width="300"/></th>
-            <th><img src="./hardware/pictures/main_board_complete.png" alt="drawing" width="600"></th>
+            <th><img src="hardware/pictures/esp32h2_soldered_front.png" alt="chip front"/></th>
+            <th><img src="hardware/pictures/esp32h2_soldered_back.png" alt="chip back"></th>
         </tr>
     </table>
+</a>
+<a>
+    <img src="hardware/pictures/sensor_light_bar_pcb.png" alt="light bar pcb">
+</a>
+<a>
+    <img src="hardware/pictures/sensor_light_bar_deployed.png" alt="light bar deployed">
 </a>
 
 
@@ -35,7 +37,7 @@ __Status: Hardware and Software is feature complete, tested and ready to Roll 'n
 <a>
     <source media="(prefers-color-scheme: dark)" srcset="hardware/wiring_diagram_dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="hardware/wiring_diagram_light.svg">
-    <img alt="Wiring diagram" src="hardware/wiring_diagram_light.svg">
+    <img alt="Wiring diagram" src="hardware/wiring_diagram_dark.svg">
 </a>
 
 The wiring diagram includes a separate flash adapter (on the left side), which is can be connected to the main unit via a 4-pin connector. It's required to flash the ESP32-H2 once it's soldered.
