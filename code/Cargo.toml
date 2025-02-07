@@ -27,7 +27,7 @@ log = "0.4"
 anyhow = "1.0"
 itertools = "0.14"
 ringbuffer = "0.15"
-esp-idf-svc = { version = "0.50.0", features = ["critical-section", "embassy-time-driver", "embassy-sync"] }
+esp-idf-svc = { version = "0.51.0", features = ["critical-section", "embassy-time-driver", "embassy-sync"] }
 esp-idf-hal = { version = "0.45.0"}
 veml7700 = "0.2"
 
