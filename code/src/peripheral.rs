@@ -83,7 +83,9 @@ impl State {
 
     pub fn calc_dim_progress(&mut self) {
         match self.phase {
-            Phase::Off => debug_assert_eq!(self.led_power_stage, 0),
+            Phase::Off => {
+                self.led_power_stage = 0
+            },
             Phase::PowerDown => {
                 if self.led_power_stage > 0 {
                     self.led_power_stage -= 1;
@@ -100,7 +102,9 @@ impl State {
                     self.phase = Phase::On;
                 }
             }
-            Phase::On => debug_assert_eq!(self.led_power_stage, LED_POWER_STAGES)
+            Phase::On => {
+                self.led_power_stage = LED_POWER_STAGES
+            }
         }
     }
 }

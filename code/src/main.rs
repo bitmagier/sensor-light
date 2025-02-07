@@ -12,22 +12,22 @@ use crate::peripheral::{Devices, State};
 mod error;
 mod peripheral;
 
-/// Number of stages the Led power level is increased from [Phase::Off] to [Phase::On] and vice versa.
+/// Number of stages (and also the maximum level) the LED power level is increased from [Phase::Off] to [Phase::On] and vice versa.
 pub const LED_POWER_STAGES: u32 = 1000;
 
 /// Percentage of hardware maximum LED brightness we want to reach
-pub const LED_MAX_POWER_LEVEL_PERCENT: f32 = 0.10;
+pub const LED_MAX_POWER_LEVEL_PERCENT: f32 = 0.08;
 
 /// max. reaction delay when LED Power Phase is in Off or ON state
 pub const ON_OFF_REACTION_STEP_DELAY_MS: u32 = 500;
 
 // step-delay (and also max. reaction time) when LED Power Phase is in PowerDown or PowerUp state
-pub const LED_DIM_DOWN_STEP_DELAY_MS: u32 = 15;
+pub const LED_DIM_DOWN_STEP_DELAY_MS: u32 = 14;
 
-pub const LED_DIM_UP_STEP_DELAY_MS: u32 = 6;
+pub const LED_DIM_UP_STEP_DELAY_MS: u32 = 7;
 
-pub const LUX_BUFFER_SIZE: usize = 10;
-pub const LUX_THRESHOLD: f32 = 0.10;
+pub const LUX_BUFFER_SIZE: usize = 8;
+pub const LUX_THRESHOLD: f32 = 0.16;
 
 const STATUS_LOG_INTERVAL: Duration = Duration::from_secs(2);
 
