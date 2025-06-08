@@ -1,4 +1,5 @@
 #![feature(duration_constructors)]
+#![feature(duration_constructors_lite)]
 
 use std::ops::Sub;
 use std::time::{Duration, Instant};
