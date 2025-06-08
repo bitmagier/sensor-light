@@ -3,8 +3,6 @@ name = "sensor-light"
 version = "1.4.0-SNAPSHOT"
 authors = ["bitmagier <bitmagier@mailbox.org>"]
 edition = "2024"
-# rust-version = "1.77.0"
-resolver = "2"
 
 [[bin]]
 name = "sensor-light"
@@ -21,7 +19,6 @@ opt-level = "z"
 [features]
 default = []
 experimental = ["esp-idf-svc/experimental"]
-
 
 [dependencies]
 log = "0.4"
